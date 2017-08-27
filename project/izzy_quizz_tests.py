@@ -22,6 +22,7 @@ class IzzyQuizzTestCase(unittest.TestCase):
         print("Tests finished")
 
     def test_root_endpoint(self):
+        print("Testing the root endpoint")
         rv = self.app.get('/')
         self.assertEqual(
             rv.data,
