@@ -6,7 +6,7 @@ GREEN='\e[0;32m'
 NC='\e[0m' #No color
 PURPLE='\e[0;35'
 
-printf 'Runing the tests to make sure that they all pass'
+printf 'Runing the tests to make sure that they all pass \n'
 python *test*.py
 
 exitCode=$?
