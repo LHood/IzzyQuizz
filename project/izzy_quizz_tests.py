@@ -1,3 +1,11 @@
+"""
+@Fileoverview: 
+This is the main test module for izz_quizz.py
+Should test all endpoints/functions to ensure
+that they return the required values
+"""
+
+
 import os
 import izzy_quizz
 import unittest
