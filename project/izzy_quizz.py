@@ -3,7 +3,8 @@
     This contains the main server code for the project
 """
 
-import os, sys
+import os
+import sys
 import json
 
 from flask import Flask, Response, request, session, g, redirect, url_for, abort, render_template, flash
@@ -43,6 +44,8 @@ def send_results():
     with open('templates/results.html') as results_file:
         return_value = str(results_file.read())
     return return_value
+
+
 """
 Results data endpoint.
 This receives requests to retrieve or update results
@@ -55,13 +58,15 @@ def handle_results_dataf():
     if request.method == 'POST':
         # Handle the post stuff
 
-        #Update the database with the data that we have 
+        # Update the database with the data that we have
         #results_file = open(results_path, "w")
-        #results_file.write(str(results_data))
+        # results_file.write(str(results_data))
         pass
     if request.method == 'GET':
         # handle the get stuff
         pass
     return str(results_data)
+
+
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=8080, debug=True)
