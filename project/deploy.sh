@@ -107,7 +107,7 @@ then
 	select yn in "Yes" "No"; do
 		case $yn in
 			Yes ) sudo rm -r env; printf '\e[0;35m Overwritten the old directory.\e[0m \n'; break;;
-			No ) create_env=false; printf 'Keeping the old directory. Assuming the virtual environment is already installed'; break;;
+			No ) create_env=false; printf 'Keeping the old directory. Assuming the virtual environment is already installed \n'; break;;
 		esac
 	done
 else
