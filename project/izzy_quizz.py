@@ -27,8 +27,6 @@ def respond():
 """
 Questions Endpoint
 """
-
-
 @app.route('/questions')
 def send_questions():
     return str(questions_data)
@@ -37,8 +35,6 @@ def send_questions():
 """
 Results Endpoint
 """
-
-
 @app.route('/results')
 def send_results():
     with open('templates/results.html') as results_file:
@@ -51,8 +47,6 @@ Results data endpoint.
 This receives requests to retrieve or update results
 data as users respond to questions that they are asked
 """
-
-
 @app.route('/results_data', methods=['GET', 'POST'])
 def handle_results_dataf():
     if request.method == 'POST':
