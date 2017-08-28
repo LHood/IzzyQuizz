@@ -6,26 +6,12 @@ GREEN='\e[0;32m'
 NC='\e[0m' #No color
 PURPLE='\e[0;35'
 
-printf 'Runing the tests to make sure that they all pass \n'
-python *test*.py
-
-exitCode=$?
-
-if [ $exitCode -eq 0 ]
-then
-	printf '\e[0;32m All tests  pass! \e[0m Proceeding to next steps\n'
-	#Deploy the project
-else
-	printf ' \e[0;31m Some tests are failing. There may be errors in performance of the project \n'
-	printf '\e[0m To stop the deployment process, press ctrl+c \n'
-	printf 'Otherwise, the deployment process will continue to next steps \n'
-fi
 
 #CHECK FOR PIP INSTALLATION
 #INSTALL PIP IF IT IS NOT THERE AND EITHER BREW OR APT-GET IS PRESENT
 #KEEP GOING IF PIP IS PRESENT, STOP IF WE CAN'T INSTALL PIP WITH BREW OR APG-GET
 
-printf 'Checking pip installation'
+printf '\e[0;35m == CHECKING PIP INSTALLATION === \e[0m \n'
 
 if ! hash pip 2>/dev/null;then
 	printf '\e[0;35m Pip not installed. Installing pip before proceeding \e[0m \n'
@@ -41,20 +27,35 @@ if ! hash pip 2>/dev/null;then
 		fi
 	fi
 else
-	printf '\e[0;32m Pip Installed proceeding to next steps \e[0m \n'
+	printf '\e[0;32m PASS: Pip is installed. Proceeding to next steps ... \e[0m \n'
 fi
 exitCode=$?
 if [ ! $exitCode -eq 0 ]
 then
-	printf '\e[0;31m Failed to install pip. please install pip manually and try again \e[0m \n Exiting \n'
+	printf '\e[0;31m There was an errow while installing pip. please install it manually and try again \e[0m \n Exiting \n'
 	exit
+fi
+
+printf ' \e[0;35m === RUNNING TESTS TO MAKE SURE THAT THEY ALL PASS === \e[0m \n'
+python *test*.py
+
+exitCode=$?
+
+if [ $exitCode -eq 0 ]
+then
+	printf '\e[0;32m PASSED: All tests  pass! \e[0m Proceeding to next steps\n'
+	#Deploy the project
+else
+	printf ' \e[0;31m Some tests are failing. There may be errors in performance of the project \n'
+	printf '\e[0m To stop the deployment process, press ctrl+c \n'
+	printf 'Otherwise, the deployment process will continue to next steps \n'
 fi
 
 #CHECK FOR VIRTUALENV INSTALLATION
 #IF NOT, USE PIP TO INSTALL VIRTUALENV
 #EXIT IF WE FAILT TO INSTALL VIRTUALENV
 
-printf 'Checking virtualenv installation'
+printf 'Checking virtualenv installation \n'
 
 if ! hash virtualenv 2>/dev/null;then
 	printf '\e[0;35m Virtualenv not installed. Installing virtualenv before proceeding \e[0m \n'
