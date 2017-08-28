@@ -100,27 +100,31 @@ fi
 #CREATE A VIRTUAL ENVIRONMENT
 #THEN ACTIVATE THE ENVIRONMENT
 printf '\e[0:35m === CREATING A VIRTUAL ENVIRONMENT ==== \e[0m \n'
-create_env=true
+create_env=false
 if [  -d "env" ]
 then
 	printf '\e[0;35m Directory with name "env" alread exists. Overwrite? \e[0m \n'
 	select yn in "Yes" "No"; do
 		case $yn in
-			Yes ) sudo rm -r env; printf '\e[0;35m Overwritten the old directory.\e[0m \n'; break;;
-			No ) create_env=false; printf 'Keeping the old directory. Assuming the virtual environment is already installed \n'; break;;
+			Yes ) sudo rm -r env; printf '\e[0;35m Overwritten the old directory.\e[0m \n'; create_env=true; break;;
+			No ) printf 'Keeping the old directory. Assuming the virtual environment is already installed \n'; break;;
 		esac
 	done
 else
-	echo "done"
+	echo "env does not exist"
 fi
 if [ create_env ]
 then
 	sudo virtualenv env
+else
+	printf 'Using the preexisting environment'
 fi
 exitCode=$?
 if [ ! $exitCode -eq 0 ]
 then
-	printf '\e[0;31m ERROR: A virtual environment cannot be created. Ply try doing it manually \e[0m \n Exiting \n'
+	printf '\e[0;31m ERROR: A virtual environment cannot be created. Please try doing it manually \e[0m \n Exiting \n'
 	exit
+else:
+	printf '\e[0;32m SUCCESS: Virtual environment created successfully \e[0m \n'
 fi
 
