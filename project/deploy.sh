@@ -123,8 +123,7 @@ exitCode=$?
 if [ ! $exitCode -eq 0 ]
 then
 	printf '\e[0;31m ERROR: A virtual environment cannot be created. Please try doing it manually \e[0m \n Exiting \n'
-	exit
-else:
+else
 	printf '\e[0;32m SUCCESS: Virtual environment created successfully \e[0m \n'
 fi
 
