@@ -4,7 +4,7 @@ message question {
 	optional string round_name = 3;
 	optional string title = 4;
 	optional string answer = 5;
-	optional repeated string extra_option = 6;
+	repeated string extra_option = 6 [packed=true];
 }
 
 message User {
