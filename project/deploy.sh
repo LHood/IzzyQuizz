@@ -21,7 +21,7 @@ if ! hash pip 2>/dev/null;then
 	else
 		if hash apt-get 2>/dev/null;then
 			printf '\e[0;35m found apt-get. Using apt-get to install pip \e[0m \n'
-			sudo apt-get install pip
+			sudo apt-get install python-pip
 		else
 			printf '\e[0;31m Cannot find brew or apt-get. Please install brew or apt-get before proceeding \e[0m \n'
 		fi
