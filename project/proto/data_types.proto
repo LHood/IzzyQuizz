@@ -1,0 +1,23 @@
+message question {
+	optional number id = 1;
+	optional string quiz_name = 2;
+	optional string round_name = 3;
+	optional string title = 4;
+	optional string answer = 5;
+	optional repeated string option = 6;
+}
+
+message User {
+	optional number id = 1;
+	optional string email = 2;
+	optional string first_name = 3;
+	optional string last_name = 4;
+}
+
+message Grade {
+	optional int32 user_id = 1;
+	optional string user_email = 2;
+	optional int64 question_id = 3;
+	optional int32 points = 4; 
+}
+
