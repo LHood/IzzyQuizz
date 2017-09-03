@@ -7,7 +7,7 @@ that they return the required values
 
 
 import os
-import izzy_quizz
+import server
 import unittest
 import tempfile
 import json
@@ -15,8 +15,8 @@ import json
 
 class IzzyQuizzTestCase(unittest.TestCase):
     def setUp(self):
-        izzy_quizz.app.testing = True
-        self.app = izzy_quizz.app.test_client()
+        server.app.testing = True
+        self.app = server.app.test_client()
 
     def tearDown(self):
         pass
