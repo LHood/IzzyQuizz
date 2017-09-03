@@ -17,10 +17,12 @@ if ! hash pip 2>/dev/null;then
 	printf '\e[0;35m Pip not installed. Installing pip before proceeding \e[0m \n'
 	if  hash brew 2>/dev/null;then
 		printf '\e[0;32m Found brew. Using brew to install pip \e[0m \n'
+		sudo brew update
 		sudo brew install python-pip
 	else
 		if hash apt-get 2>/dev/null;then
 			printf '\e[0;35m found apt-get. Using apt-get to install pip \e[0m \n'
+			sudo apt-get update
 			sudo apt-get install python-pip
 		else
 			printf '\e[0;31m Cannot find brew or apt-get. Please install brew or apt-get before proceeding \e[0m \n'
