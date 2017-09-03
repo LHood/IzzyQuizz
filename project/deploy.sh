@@ -75,9 +75,8 @@ if [ $exitCode -eq 0 ]
 then
 	printf '\e[0;32m PASS: Hoorray!! All tests  pass! Proceeding to next steps... \e[0m \n'
 else
-	printf ' \e[0;31m Some tests are failing. There may be errors in performance of the project \n'
-	printf '\e[0m To stop the deployment process, press ctrl+c \n'
-	printf 'Otherwise, the deployment process will continue to next steps \n'
+	printf ' \e[0;31m Some tests are failing. Please make sure that your code passes before proceeding! \n Going to exit \e[0m \n'
+	exit
 fi
 
 #CHECK FOR VIRTUALENV INSTALLATION

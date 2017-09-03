@@ -1,10 +1,4 @@
 env
 
-*.jpg
-*.jpeg
-*.png
 *.swp
-*.db
 *.pyc
-*.sql
-*.json
