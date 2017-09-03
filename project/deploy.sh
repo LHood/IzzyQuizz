@@ -5,6 +5,21 @@ RED='\e[0;31m'
 GREEN='\e[0;32m'
 NC='\e[0m' #No color
 PURPLE='\e[0;35'
+# ================================== Here is how things should happen ==================
+# Install Pip
+# Install Virtualenv
+#Create the environment
+#Activate the environment
+#Install flask in the environment
+#Then run unittests
+#If they pass, then deploy the flask server
+#In addition, we should not just prompt to overwrrite the current flask directory, but 
+# We can keep iterating until we find a valid name for the env that we are going to create.
+#Also, that way it could be easy for us to know how many envs we have, and which ones we have
+# Active and which ones that we don't
+#TODO(heyaudace): Rearrange the code to procceed through these steps
+#=======================================================================================
+
 
 
 #CHECK FOR PIP INSTALLATION
