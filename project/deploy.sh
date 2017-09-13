@@ -100,6 +100,34 @@ then
 	exit
 fi
 
+#CHECK FOR GUNICORN INSTALLATION
+#INSTALL GUNICORN USING PIP IF IT'S NOT THERE
+#EXIT IF THE GUNICORN INSTALLATION FAILS
+printf '\e[0;35m === CHECKING GUNICORN INSTALLATION ===\e[0m \n'
+
+if hash gunicorn 2>/dev/null;then
+	printf '\e[0;32m PASS: GUNICORN is installed. Proceeding to the next steps ... \e[0m \n'
+else
+	printf '\e[0;35m WARNING: GUNICORN is not installed. Attempting to install gunicorn \e[0m \n'
+	
+	if hash apt-get 2>/dev/null;then
+	       sudo apt-get install gunicorn
+        else
+	       brew install gunicorn
+	fi
+	if hash gunicorn 2>/dev/null;then
+		printf '\e[0;32 PASS: Installed gunicorn successfully. Proceeding to next steps ... \e[0m \n'
+	fi
+
+fi
+
+exitCode=$?
+if [ ! $exitCode -eq 0 ]
+then
+	printf '\e[0;31m There was an error while installing gunicorn. Please install it manually and try again. \e[0m \n Exiting \n'
+	exit
+fi
+
 
 #RUN UNIT AND END2END TESTS TO ENSURE THAT THE APP WILL BEHAVE AS EXPECTED
 #GIVE A WARNING IF THE TESTS DON'T PASS, BUT PROCEED
@@ -171,6 +199,8 @@ else
 fi
 END
 #Install gunicorn
-pip install gunicorn
+#pip install gunicorn
 #Launch the server now
-sudo gunicorn --bind 0.0.0.0:8080 wsgi:app
+#sudo gunicorn --bind 0.0.0.0:8080 wsgi:app
+#RUN THIS USING UWSGI
+sudo uwsgi --socket 0.0.0.0:8080 --protocol=http -w wsgi
