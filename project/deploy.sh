@@ -77,6 +77,30 @@ then
 	exit
 fi
 
+#CHECK FOR UWSGI INSTALLATION
+#INSTALL UWSGI USING PIP IF IT'S NOT THERE
+#EXIT IF THE UWSGI INSTALLATION FAILS
+printf '\e[0;35m === CHECKING UWSGI INSTALLATION ===\e[0m \n'
+
+if hash uwsgi 2>/dev/null;then
+	printf '\e[0;32m PASS: UWSGI is installed. Proceeding to the next steps ... \e[0m \n'
+else
+	printf '\e[0;35m WARNING: UWSGI is not installed. Attempting to install flask \e[0m \n'
+	sudo pip install uwsgi
+	if hash flask 2>/dev/null;then
+		printf '\e[0;32 PASS: Installed uwsgi successfully. Proceeding to next steps ... \e[0m \n'
+	fi
+
+fi
+
+exitCode=$?
+if [ ! $exitCode -eq 0 ]
+then
+	printf '\e[0;31m There was an error while installing uwsgi. Please install it manually and try again. \e[0m \n Exiting \n'
+	exit
+fi
+
+
 #RUN UNIT AND END2END TESTS TO ENSURE THAT THE APP WILL BEHAVE AS EXPECTED
 #GIVE A WARNING IF THE TESTS DON'T PASS, BUT PROCEED
 #THE USER CAN DECIDE TO QUIT THE EXECUTION BY PRESSING CTRL + C
