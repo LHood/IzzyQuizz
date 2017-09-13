@@ -146,6 +146,7 @@ else
 	printf '\e[0;32m SUCCESS: Virtual environment created successfully \e[0m \n'
 fi
 END
+#Install gunicorn
+pip install gunicorn
 #Launch the server now
-export FLASK_APP=server.py
-python server.py
+sudo gunicorn --bind 0.0.0.0:8080 wsgi:app
