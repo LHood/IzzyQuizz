@@ -9,6 +9,9 @@ import json
 
 from flask import Flask, Response, request, session, g, redirect, url_for, abort, render_template, flash
 
+from apiclient import discovery
+from oauth2client import client
+
 app = Flask(__name__)
 
 questions_path = 'data/questions.json'
@@ -20,13 +23,34 @@ with open(results_path, "r") as results_file:
 
 
 @app.route('/')
-def respond():
-    return "<html><b>It works!</b></html>"
+def index():
+    print "requested /"
 
+    if 'credentials' not in session:
+        print "user not logged in"
+        return redirect(url_for('oauth2callback'))
+    credentials = client.Ouath2Credentials.from_json(session['credentials'])
+    if credentials.acces_token_expired:
+        return redirect(url_for('oauth2callback'))
+    else:
+        return "<html><b>It works perfectly!</b></html>"
 
-"""
-Questions Endpoint
-"""
+@app.route('/oauth2callback')
+def oauth2callback():
+    return "you are at oauth2callback"
+    flow = client.flow_from_clientsecrets('client_secrets.json',
+    scope = 'https://googleapis.com/auth/userinfo.email',
+    redirect_uri=url_for('oauth2callback', _external=True),
+    include_granted_scopes=True)
+    if 'code' not in request.args:
+        auth_uri = flow.step1_get_authorize_url()
+        return redirect(auth_uri)
+    else:
+        auth_code = flask.request.args.get('code')
+        credentials = flow.step2_exchange(auth_code)
+        session['credentials'] = credentials.to_json()
+        return redirect(url_for('index'))
+
 @app.route('/questions')
 def send_questions():
     return str(questions_data)
