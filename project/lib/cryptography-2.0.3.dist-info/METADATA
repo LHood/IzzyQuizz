@@ -29,15 +29,13 @@ Classifier: Programming Language :: Python :: Implementation :: PyPy
 Classifier: Topic :: Security :: Cryptography
 Requires-Dist: asn1crypto (>=0.21.0)
 Requires-Dist: cffi (>=1.7)
-Requires-Dist: enum34
 Requires-Dist: idna (>=2.1)
-Requires-Dist: ipaddress
 Requires-Dist: six (>=1.4.1)
 Provides-Extra: docstest
 Requires-Dist: doc8; extra == 'docstest'
 Requires-Dist: pyenchant; extra == 'docstest'
 Requires-Dist: readme-renderer (>=16.0); extra == 'docstest'
-Requires-Dist: sphinx (!=1.6.3,!=1.6.1,!=1.6.2); extra == 'docstest'
+Requires-Dist: sphinx (!=1.6.2,!=1.6.1,!=1.6.3); extra == 'docstest'
 Requires-Dist: sphinx-rtd-theme; extra == 'docstest'
 Requires-Dist: sphinxcontrib-spelling; extra == 'docstest'
 Provides-Extra: pep8test

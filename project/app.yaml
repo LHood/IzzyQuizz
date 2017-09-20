@@ -9,3 +9,8 @@ handlers:
 - url: /.*
   script: server.app
 #END HANDLERS
+
+#START LIBRARIES
+libraries:
+- name : ssl
+  version: latest
