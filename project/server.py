@@ -88,9 +88,4 @@ def handle_results_dataf():
 
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', debug=True)
-
-logHandler = logging.FileHandler('app.log')
-logHandler.setLevel(logging.INFO)
-app.logger.addHandler(logHandler)
-app.logger.setLevel(logging.INFO)
+    app.run(host='0.0.0.0')
