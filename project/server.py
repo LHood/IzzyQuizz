@@ -36,7 +36,7 @@ def index():
 @app.route('/oauth2callback')
 def oauth2callback():
     flow = client.flow_from_clientsecrets('client_secrets.json',
-    scope = 'https://googleapis.com/auth/userinfo.email',
+    scope = 'https://www.googleapis.com/auth/userinfo.profile',
     redirect_uri=url_for('oauth2callback', _external=True))
     flow.params['include_granted_scopes'] = 'true'
 
@@ -44,7 +44,7 @@ def oauth2callback():
         auth_uri = flow.step1_get_authorize_url()
         return redirect(auth_uri)
     else:
-        auth_code = flask.request.args.get('code')
+        auth_code = request.args.get('code')
         credentials = flow.step2_exchange(auth_code)
         session['credentials'] = credentials.to_json()
         return redirect(url_for('index'))
@@ -85,4 +85,7 @@ def handle_results_dataf():
 
 
 if __name__ == "__main__":
+    app.secret_key = 'super secret key'
+    app.config['SESSION_TYPE'] = 'filesystem'
+    app.debug = True
     app.run(host='0.0.0.0')
