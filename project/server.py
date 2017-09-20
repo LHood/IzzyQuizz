@@ -46,8 +46,9 @@ def oauth2callback():
     else:
         auth_code = request.args.get('code')
         credentials = flow.step2_exchange(auth_code)
-        return "credentials: "+str(credentials.to_json())
+        return session.to_json()
         session['credentials'] = credentials.to_json()
+        return "our magic probably worked"
         return redirect(url_for('index'))
 
 @app.route('/questions')
