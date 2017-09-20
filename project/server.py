@@ -38,7 +38,6 @@ def index():
 
 @app.route('/oauth2callback')
 def oauth2callback():
-    return "you are at oauth2callback"
     flow = client.flow_from_clientsecrets('client_secrets.json',
     scope = 'https://googleapis.com/auth/userinfo.email',
     redirect_uri=url_for('oauth2callback', _external=True),
