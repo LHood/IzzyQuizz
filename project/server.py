@@ -36,7 +36,7 @@ def index():
 @app.route('/oauth2callback')
 def oauth2callback():
     flow = client.flow_from_clientsecrets('client_secrets.json',
-    scope = 'https://www.googleapis.com/auth/userinfo.profile',
+    scope = 'https://www.googleapis.com/auth/plus.me',
     redirect_uri=url_for('oauth2callback', _external=True))
     flow.params['include_granted_scopes'] = 'true'
 
@@ -46,6 +46,7 @@ def oauth2callback():
     else:
         auth_code = request.args.get('code')
         credentials = flow.step2_exchange(auth_code)
+        return "credentials: "+str(credentials.to_json())
         session['credentials'] = credentials.to_json()
         return redirect(url_for('index'))
 
