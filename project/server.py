@@ -12,7 +12,7 @@ from flask import Flask, Response, request, session, g, redirect, url_for, abort
 
 from apiclient import discovery
 from oauth2client import client
-
+import requests
 app = Flask(__name__)
 
 questions_path = 'data/questions.json'
@@ -31,7 +31,10 @@ def index():
     if credentials.acces_token_expired:
         return redirect(url_for('oauth2callback'))
     else:
-        return "<html><b>It works perfectly!</b></html>"
+        access_token = credentials['access_token']
+        info_link = 'https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token='+access_token
+        user_info = requests.get(info_link).content
+        return "<b>Logged with info : <b> <br> "+user_info
 
 @app.route('/oauth2callback')
 def oauth2callback():
@@ -46,6 +49,8 @@ def oauth2callback():
     else:
         auth_code = request.args.get('code')
         credentials = flow.step2_exchange(auth_code)
+        if session is None or not session:
+            session = {}
         session['credentials'] = credentials.to_json()
         return redirect(url_for('index'))
 
