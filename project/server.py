@@ -27,14 +27,18 @@ with open(results_path, "r") as results_file:
 def index():
     if 'credentials' not in session:
         return redirect(url_for('oauth2callback'))
-    credentials = client.Ouath2Credentials.from_json(session['credentials'])
-    if credentials.acces_token_expired:
+    credentials = client.OAuth2Credentials.from_json(session['credentials'])
+    if credentials.access_token_expired:
         return redirect(url_for('oauth2callback'))
     else:
-        access_token = credentials['access_token']
+        access_token = credentials.access_token
         info_link = 'https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token='+access_token
         user_info = requests.get(info_link).content
         return "<b>Logged with info : <b> <br> "+user_info
+
+@app.route('/credentials')
+def send_creds():
+    return str(session['credentials'])
 
 @app.route('/oauth2callback')
 def oauth2callback():
@@ -49,7 +53,6 @@ def oauth2callback():
     else:
         auth_code = request.args.get('code')
         credentials = flow.step2_exchange(auth_code)
-        session = {}
         session['credentials'] = credentials.to_json()
         return redirect(url_for('index'))
 
@@ -87,9 +90,9 @@ def handle_results_dataf():
         pass
     return str(results_data)
 
+app.secret_key = 'super-secret-key'
+app.config['SESSION_TYPE'] = 'filesystem'
 
 if __name__ == "__main__":
-    app.secret_key = 'super secret key'
-    app.config['SESSION_TYPE'] = 'filesystem'
     app.debug = True
     app.run(host='0.0.0.0')
