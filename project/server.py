@@ -49,8 +49,7 @@ def oauth2callback():
     else:
         auth_code = request.args.get('code')
         credentials = flow.step2_exchange(auth_code)
-        if session is None or not session:
-            session = {}
+        session = {}
         session['credentials'] = credentials.to_json()
         return redirect(url_for('index'))
 
