@@ -38,7 +38,7 @@ def oauth2callback():
     flow = client.flow_from_clientsecrets('client_secrets.json',
     scope = 'https://googleapis.com/auth/userinfo.email',
     redirect_uri=url_for('oauth2callback', _external=True))
-    flow.params['include_granted_scopes'] = True
+    flow.params['include_granted_scopes'] = 'true'
 
     if 'code' not in request.args:
         auth_uri = flow.step1_get_authorize_url()
