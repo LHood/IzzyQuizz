@@ -3,6 +3,7 @@
     This contains the main server code for the project
 """
 
+import logging
 import os
 import sys
 import json
@@ -87,4 +88,9 @@ def handle_results_dataf():
 
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0')
+    app.run(host='0.0.0.0', debug=True)
+
+logHandler = logging.FileHandler('app.log')
+logHandler.setLevel(logging.INFO)
+app.logger.addHandler(logHandler)
+app.logger.setLevel(logging.INFO)
