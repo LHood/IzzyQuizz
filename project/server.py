@@ -25,10 +25,7 @@ with open(results_path, "r") as results_file:
 
 @app.route('/')
 def index():
-    print "requested /"
-
     if 'credentials' not in session:
-        print "user not logged in"
         return redirect(url_for('oauth2callback'))
     credentials = client.Ouath2Credentials.from_json(session['credentials'])
     if credentials.acces_token_expired:
@@ -40,8 +37,9 @@ def index():
 def oauth2callback():
     flow = client.flow_from_clientsecrets('client_secrets.json',
     scope = 'https://googleapis.com/auth/userinfo.email',
-    redirect_uri=url_for('oauth2callback', _external=True),
-    include_granted_scopes=True)
+    redirect_uri=url_for('oauth2callback', _external=True))
+    flow.params['include_granted_scopes'] = True
+
     if 'code' not in request.args:
         auth_uri = flow.step1_get_authorize_url()
         return redirect(auth_uri)

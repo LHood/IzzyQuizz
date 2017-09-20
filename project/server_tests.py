@@ -13,22 +13,16 @@ import tempfile
 import json
 
 
-class IzzyQuizzTestCase(unittest.TestCase):
+class Endpoints(unittest.TestCase):
     def setUp(self):
         server.app.testing = True
         self.app = server.app.test_client()
-
-    def tearDown(self):
-        pass
-
     def test_root_endpoint(self):
         rv = self.app.get('/')
-        self.assertEqual(
-            rv.data,
-            "<html><b>It works!</b></html>",
-            "Incorrect return value from the root endpoint")
-        assert rv.data != "<b>It works!</b>"
-
+        self.assertEqual(rv.status, '302 FOUND', " unexpected status code from the root")
+    def test_oauth2callback(self):
+        rv = self.app.get('/oauth2callback')
+        print('oauth_callback: \n', rv.data)
     def test_questions_endpoint(self):
         rv = self.app.get('/questions')
         with open('data/questions.json', 'r') as my_questions:
