@@ -29,18 +29,16 @@ with open(results_path, "r") as results_file:
 @app.route('/')
 def index():
     if 'credentials' not in session:
-        return redirect('/')
-        return redirect(url_for('oauth2callback'))
+        return render_template('home.html')
     credentials = client.OAuth2Credentials.from_json(session['credentials'])
     if credentials.access_token_expired:
-        return redirect(url_for('oauth2callback'))
+        return render_template('home.html')
     else:
         access_token = credentials.access_token
         info_link = 'https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token='+access_token
         user_info = requests.get(info_link).content.decode()
         user_info = json.loads(user_info)
-        return "<html><img src="+user_info['picture'] + \
-        " alt=\"user_image\"/></html>"
+        return render_template('quiz.html',user_info=user_info)
 
 @app.route('/user')
 def send_creds():
@@ -57,6 +55,8 @@ def send_creds():
 
 @app.route('/<filename>'+'.html')
 def return_template(filename):
+    if 'credentials' not in session:
+        return render_template('home.html')
     return render_template(filename+'.html')
 
 @app.route('/oauth2callback')
@@ -108,6 +108,10 @@ def revoke_permissions():
 
 @app.route('/results_data', methods=['GET', 'POST'])
 def handle_results_dataf():
+    with open('super_users.json', 'r') as f:
+        super_users = json.load(f)
+    user = requests.get('http://127.0.0.1:5000/user').content.decode()
+    print('user: \n', user)
     if request.method == 'POST':
         # Handle the post stuff
 
@@ -125,4 +129,4 @@ app.config['SESSION_TYPE'] = 'filesystem'
 
 if __name__ == "__main__":
     app.debug = True
-    app.run(host='0.0.0.0',port=5000)
+    app.run(host='0.0.0.0',port=5000, threaded=True)
