@@ -3,3 +3,4 @@ gunicorn==19.7.1
 google-api-python-client
 requests
 pyopenssl
+httplib2

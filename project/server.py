@@ -7,6 +7,7 @@ import logging
 import os
 import sys
 import json
+import httplib2
 
 from flask import Flask, Response, request, session, g, redirect, url_for, abort, render_template, flash
 
@@ -33,12 +34,23 @@ def index():
     else:
         access_token = credentials.access_token
         info_link = 'https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token='+access_token
-        user_info = requests.get(info_link).content
-        return "<b>Logged with info : <b> <br> "+user_info
+        user_info = requests.get(info_link).content.decode()
+        user_info = json.loads(user_info)
+        return "<html><img src="+user_info['picture'] + \
+        " alt=\"user_image\"/></html>"
 
-@app.route('/credentials')
+@app.route('/user')
 def send_creds():
-    return str(session['credentials'])
+    credentials = client.OAuth2Credentials.from_json(session['credentials'])
+    try:
+        assert not credentials.access_token_expired
+    except:
+        return "credentials expired. Please go back to the home page to login"
+    
+    access_token = credentials.access_token
+    info_link = 'https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token='+access_token
+    user_info = requests.get(info_link).content.decode()
+    return user_info
 
 @app.route('/oauth2callback')
 def oauth2callback():
@@ -76,6 +88,17 @@ Results data endpoint.
 This receives requests to retrieve or update results
 data as users respond to questions that they are asked
 """
+@app.route('/revoke')
+def revoke_permissions():
+    credentials = client.OAuth2Credentials.from_json(session['credentials'])
+    try:
+        credentials.revoke(httplib2.Http())
+    except:
+        pass
+    if 'credentials' in session:
+        del(session['credentials'])
+    return 'logout successful'
+
 @app.route('/results_data', methods=['GET', 'POST'])
 def handle_results_dataf():
     if request.method == 'POST':
@@ -95,4 +118,4 @@ app.config['SESSION_TYPE'] = 'filesystem'
 
 if __name__ == "__main__":
     app.debug = True
-    app.run(host='0.0.0.0')
+    app.run(host='0.0.0.0',port=5000)
