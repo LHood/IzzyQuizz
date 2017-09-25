@@ -16,6 +16,8 @@ from oauth2client import client
 import requests
 app = Flask(__name__)
 
+dir_path = os.path.dirname(os.path.realpath(__file__))
+
 questions_path = 'data/questions.json'
 results_path = 'data/results.json'
 with open(questions_path, "r") as questions_file:
@@ -27,6 +29,7 @@ with open(results_path, "r") as results_file:
 @app.route('/')
 def index():
     if 'credentials' not in session:
+        return redirect('/')
         return redirect(url_for('oauth2callback'))
     credentials = client.OAuth2Credentials.from_json(session['credentials'])
     if credentials.access_token_expired:
@@ -41,16 +44,20 @@ def index():
 
 @app.route('/user')
 def send_creds():
-    credentials = client.OAuth2Credentials.from_json(session['credentials'])
     try:
-        assert not credentials.access_token_expired
+        assert 'credentials' in session
     except:
         return "credentials expired. Please go back to the home page to login"
     
+    credentials = client.OAuth2Credentials.from_json(session['credentials'])
     access_token = credentials.access_token
     info_link = 'https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token='+access_token
     user_info = requests.get(info_link).content.decode()
     return user_info
+
+@app.route('/<filename>'+'.html')
+def return_template(filename):
+    return render_template(filename+'.html')
 
 @app.route('/oauth2callback')
 def oauth2callback():
