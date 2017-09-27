@@ -9,7 +9,8 @@ import sys
 import json
 import httplib2
 
-from flask import Flask, Response, request, session, g, redirect, url_for, abort, render_template, flash
+from flask import Flask, Response, request, session, g, redirect, url_for, \
+        abort, render_template, flash, send_from_directory
 
 from apiclient import discovery
 from oauth2client import client
@@ -20,11 +21,19 @@ dir_path = os.path.dirname(os.path.realpath(__file__))
 
 questions_path = 'data/questions.json'
 results_path = 'data/results.json'
+
 with open(questions_path, "r") as questions_file:
     questions_data = json.loads(questions_file.read())
 with open(results_path, "r") as results_file:
     results_data = json.loads(results_file.read())
 
+@app.route('/closure/<path:path>')
+def serve_closure(path):
+    return send_from_directory('static/closure-library/closure', path)
+@app.route('/js/<path:path>')
+
+def serve_js_content(path):
+    return send_from_directory('js', path)
 
 @app.route('/')
 def index():
