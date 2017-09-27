@@ -30,6 +30,9 @@ with open(results_path, "r") as results_file:
 @app.route('/closure/<path:path>')
 def serve_closure(path):
     return send_from_directory('static/closure-library/closure', path)
+@app.route('/jasmine/<path:path>')
+def serve_jasmine(path):
+    return send_from_directory('jasmine', path)
 @app.route('/js/<path:path>')
 
 def serve_js_content(path):
