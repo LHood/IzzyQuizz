@@ -116,7 +116,13 @@ def revoke_permissions():
         pass
     if 'credentials' in session:
         del(session['credentials'])
-    return 'logout successful'
+    return str({'response': 'success'})
+
+@app.route('/logout')
+def logout_user():
+    if 'credentials' in session:
+        del(session['credentials'])
+    return str({'response': 'success'})
 
 @app.route('/results_data', methods=['GET', 'POST'])
 def handle_results_dataf():

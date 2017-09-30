@@ -1,0 +1,38 @@
+body {
+	text-align: center;
+	margin: auto;
+	max-width: 90%;
+}
+
+img.login_logo {
+	max-width: 300px;
+	max-height: 200px;
+	display: inline;
+}
+h2 {
+	display: inline;
+}
+div.top_holder, div.body_holder div.bottom_holder {
+	margin: auto;
+	max-width: 90%;
+	margin-top: 10px;
+	margin-bottom: 10px;
+	display: block;
+}
+
+div.body_holder {
+	text-align: center;
+	margin: auto;
+	max-width: 80%;
+}
+div.body_holder * {
+	display: block;
+	margin: auto;
+	padding: 5px;
+	margin-bottom: 15px;
+	margin-top: 5px;
+}
+div.main_holder {
+	margin: auto;
+	padding: 10px;
+}
