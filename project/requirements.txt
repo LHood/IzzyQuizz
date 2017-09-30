@@ -5,3 +5,4 @@ requests
 pyopenssl
 httplib2
 jasmine
+google-cloud-datastore
