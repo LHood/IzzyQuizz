@@ -1,0 +1,23 @@
+body {
+	text-align: center;
+	margin: auto;
+	max-width: 90%;
+}
+img.user-image {
+	max-width: 50px;
+	max-height: 50px;
+}
+div.name-holder {
+	margin-top: 0px;
+}
+a.logout-button {
+	display: block;
+	max-width: 100px;
+	margin: auto;
+}
+div.user-holder.z-depth-1{
+	max-width: 30%;
+	margin-right: 0px;
+	float: right;
+	padding: 10px;
+}

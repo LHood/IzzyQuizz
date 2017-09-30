@@ -103,9 +103,7 @@ def send_results():
 
 
 """
-Results data endpoint.
-This receives requests to retrieve or update results
-data as users respond to questions that they are asked
+Oauth2 Logout and revoke functionality
 """
 @app.route('/revoke')
 def revoke_permissions():
@@ -116,14 +114,19 @@ def revoke_permissions():
         pass
     if 'credentials' in session:
         del(session['credentials'])
-    return str({'response': 'success'})
+    return redirect(url_for('index'))
 
 @app.route('/logout')
 def logout_user():
     if 'credentials' in session:
         del(session['credentials'])
-    return str({'response': 'success'})
+    return redirect(url_for('index'))
 
+"""
+Results data endpoint.
+This receives requests to retrieve or update results
+data as users respond to questions that they are asked
+"""
 @app.route('/results_data', methods=['GET', 'POST'])
 def handle_results_dataf():
     with open('super_users.json', 'r') as f:
