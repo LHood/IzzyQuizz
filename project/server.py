@@ -17,6 +17,10 @@ from oauth2client import client
 import requests
 app = Flask(__name__)
 
+from google.cloud import datastore
+import time
+datastore_client = datastore.Client()
+
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
 questions_path = 'data/questions.json'
@@ -65,6 +69,12 @@ def send_creds():
     user_info = requests.get(info_link).content.decode()
     return user_info
 
+@app.route('/manage')
+def send_manage_page():
+    if 'credentials' in session:
+        return render_template('manage.html')
+    return redirect(url_for('index'))
+
 @app.route('/<filename>'+'.html')
 def return_template(filename):
     if 'credentials' not in session:
@@ -85,7 +95,22 @@ def oauth2callback():
         auth_code = request.args.get('code')
         credentials = flow.step2_exchange(auth_code)
         session['credentials'] = credentials.to_json()
+        save_user()
         return redirect(url_for('index'))
+
+def save_user():
+    created_at = int(time.time()//1000)
+    kind = 'user'
+    credentials = client.OAuth2Credentials.from_json(session['credentials'])
+    access_token = credentials.access_token
+    info_link = 'https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token='+access_token
+    user_info = requests.get(info_link).content.decode()
+    
+    task_key = datastore_client.key(kind, json.loads(user_info)['id'])
+    task = datastore.Entity(key=task_key)
+
+    task['info'] = user_info
+    datastore_client.put(task)
 
 @app.route('/questions')
 def send_questions():
@@ -144,6 +169,92 @@ def handle_results_dataf():
         # handle the get stuff
         pass
     return str(results_data)
+
+@app.route('/questions/new', methods=['POST'])
+def save_question():
+    if request.method == 'POST':
+        title = request.get('title')
+        answer = request.get('answer')
+        options = list(request.get('extra_options'))
+        created_at = int(time.time()//1000)
+
+        kind = 'question'
+        task_key = datastore_client.key(kind, created_at)
+        task = datastore.Entity(key=task_key)
+        task['title'] = title
+        task['answer'] = answer
+        task['options'] = options
+        task['created_at'] = created_at
+        datastore_client.put(task)
+
+@app.route('/questions/all')
+def send_all_questions():
+    query = datastore_client.query(kind='question')
+    results = list(query.fetch())
+    response = []
+    for result in results:
+        obj = {}
+        obj['title'],obj['answer'],obj['options'],obj['created_at'] = \
+                result['title'],result['answer'],result['options'],result['created_at']
+        response.append(obj)
+    return str(response)
+@app.route('/rounds/new', methods=['POST'])
+def create_round():
+    if request.method == 'POST':
+        title = request.get('title')
+        questions = request.get('questions')
+        try:
+            order = request.get('order')
+        except:
+            order = 5
+        created_at = int(time.time()//1000)
+        kind = 'round'
+        task_key = datastore_client.key(kind, created_at)
+        task = datastore.Entity(key=task_key)
+        task['title'] = title
+        task['questions'] = list(questions)
+        task['order'] = order
+        task['created_at'] = created_at
+        task['active'] = False
+        datastore_client.put(task)
+
+@app.route('/rounds/all')
+def send_all_rounds():
+    query = datastore_client.query(kind='round')
+    results = list(query.fetch())
+    response = []
+    for result in results:
+        new_dict = {}
+        for k in result:
+            new_dict[k] = result[k]
+        response.append(new_dict)
+    return json.dumps(response)
+
+@app.route('/rounds/current')
+def send_current_rounds():
+    query = datastore_client.query(kind='round')
+    query.add_filter('active', '=', True)
+
+    results = list(query.fetch())
+    response = []
+    for result in result:
+        new_dict = {}
+        for k in result:
+            new_dict[k] = result[k]
+        response.append(new_dict)
+    return json.dumps(response)
+
+@app.route('/users/all')
+def send_all_users():
+    query = datastore_client.query(kind='user')
+    results = list(query.fetch())
+    response = []
+    for result in results:
+        if 'info' in result:
+            response.append(result['info'])
+            print(json.loads(result['info']))
+    return json.dumps(response)
+
 
 app.secret_key = 'super-secret-key'
 app.config['SESSION_TYPE'] = 'filesystem'
