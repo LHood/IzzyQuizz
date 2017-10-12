@@ -1,18 +1,15 @@
 goog.provide('XhrService');
 
 function get(url, data={}) {
-	console.log('going to send a get request at ', url);
 
 	return new Promise(function(resolve, reject) {
 		const xhr = new XMLHttpRequest();
 
 		xhr.onload = function(e) {
 			const response = xhr.response;
-			console.log('got response ', response);
 			resolve(xhr.response);
 		};
 		xhr.onerror = function(error) {
-			console.log('got error ', error);
 			reject(error.message);
 		};
 		xhr.open('GET', url);

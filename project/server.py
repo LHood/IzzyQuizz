@@ -10,7 +10,7 @@ import json
 import httplib2
 
 from flask import Flask, Response, request, session, g, redirect, url_for, \
-        abort, render_template, flash, send_from_directory
+        abort, render_template, flash, send_from_directory, jsonify
 
 from apiclient import discovery
 from oauth2client import client
@@ -170,13 +170,16 @@ def handle_results_dataf():
         pass
     return str(results_data)
 
-@app.route('/questions/new', methods=['POST'])
+@app.route('/question/new', methods=['POST'])
 def save_question():
     if request.method == 'POST':
-        title = request.get('title')
-        answer = request.get('answer')
-        options = list(request.get('extra_options'))
-        created_at = int(time.time()//1000)
+        data = json.loads(request.data)
+        print(data, ' is data')
+        title = data['title']
+        answer = data['answer']
+        options = list(data['extra_options'])
+        print('data: ', title, answer, options, '\n')
+        created_at = int(time.time())
 
         kind = 'question'
         task_key = datastore_client.key(kind, created_at)
@@ -187,6 +190,7 @@ def save_question():
         task['question_id'] = created_at
         task['created_at'] = created_at
         datastore_client.put(task)
+        return str({'success'})
 
 @app.route('/questions/all')
 def send_all_questions():
@@ -198,7 +202,7 @@ def send_all_questions():
         obj['title'],obj['answer'],obj['options'],obj['created_at'] = \
                 result['title'],result['answer'],result['options'],result['created_at']
         response.append(obj)
-    return str(response)
+    return jsonify(response)
 @app.route('/rounds/new', methods=['POST'])
 def create_round():
     if request.method == 'POST':
