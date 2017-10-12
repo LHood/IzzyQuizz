@@ -173,12 +173,10 @@ def handle_results_dataf():
 @app.route('/question/new', methods=['POST'])
 def save_question():
     if request.method == 'POST':
-        data = json.loads(request.data)
-        print(data, ' is data')
+        data = json.loads(request.data.decode())
         title = data['title']
         answer = data['answer']
         options = list(data['extra_options'])
-        print('data: ', title, answer, options, '\n')
         created_at = int(time.time())
 
         kind = 'question'
