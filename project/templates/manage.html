@@ -5,7 +5,7 @@
 			<link rel = "stylesheet" href = "https://fonts.googleapis.com/icon?family=Material+Icons">
       		<link rel = "stylesheet" rel="stylesheet" 
 			href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
-			<link rel="stylesheet" type="text/css" href="/static/quiz_styles.css">
+			<link rel="stylesheet" type="text/css" href="/static/manage_styles.css">
 		<script 
    			src="https://code.jquery.com/jquery-3.2.1.min.js"
   			integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
@@ -13,11 +13,19 @@
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.js"></script>
 	</head>
 	<body class='z-depth-2'>
-		<h3>MIT African Students Association </h3>
-		<div id="newQuestionHolder"></div>
-		<div id="questionsHolder"></div>
-		<div id="roundsHolder"></div>
-		<div id="newRoundHolder"></div>
+		<h2>MIT ASA QUIZ ADMIN </h2>
+		<div class="main_holder z-depth-2">
+			<div id="quizManager"></div>
+		</div>
+		<div class="main_holder z-depth-2">
+			<h3> NEW QUESITONS </h3>
+			<div id="newQuestionHolder"></div>
+		</div>
+		<div class="main_holder z-depth-2">
+			<h3> QUESTIONS LIST</h3>
+			<div id="questionsHolder"></div>
+		</div>
+
 		<div></div>
 		<script src="/closure/goog/base.js"></script>
 		<script src="/js/module_tools.js"></script>

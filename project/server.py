@@ -170,15 +170,15 @@ def handle_results_dataf():
         pass
     return str(results_data)
 
-@app.route('/question/new', methods=['POST'])
-def save_question():
+@app.route('/question/new/<created_at>', methods=['POST'])
+def save_question(created_at):
+    created_at = int(created_at)
     if request.method == 'POST':
         data = json.loads(request.data.decode())
         title = data['title']
         answer = data['answer']
         options = list(data['extra_options'])
-        created_at = int(time.time())
-
+        rounds = list(data['rounds'])
         kind = 'question'
         task_key = datastore_client.key(kind, created_at)
         task = datastore.Entity(key=task_key)
@@ -187,8 +187,21 @@ def save_question():
         task['options'] = options
         task['question_id'] = created_at
         task['created_at'] = created_at
+        task['rounds'] = rounds
         datastore_client.put(task)
-        return str({'success'})
+        return jsonify(str({'success'}))
+@app.route('/question/delete/<created_at>', methods=["POST"])
+def delete_question(created_at):
+    created_at = int(created_at)
+    data = json.loads(request.data.decode())
+    kind = 'question'
+    task_key = datastore_client.key(kind, created_at)
+    current = datastore_client.get(task_key)
+    print('current: ', current, '\n')
+    datastore_client.delete(task_key)
+    current = datastore_client.get(task_key)
+    print('past: ', current, '\n')
+    return jsonify({'response':'success'});
 
 @app.route('/questions/all')
 def send_all_questions():
@@ -197,29 +210,50 @@ def send_all_questions():
     response = []
     for result in results:
         obj = {}
-        obj['title'],obj['answer'],obj['options'],obj['created_at'] = \
-                result['title'],result['answer'],result['options'],result['created_at']
+        obj['title'],obj['answer'],obj['options'],obj['created_at'],obj['rounds'] = \
+                result['title'],result['answer'],result['options'],result['created_at'],result['rounds']
         response.append(obj)
     return jsonify(response)
-@app.route('/rounds/new', methods=['POST'])
-def create_round():
-    if request.method == 'POST':
-        title = request.get('title')
-        questions = request.get('questions')
-        try:
-            order = request.get('order')
-        except:
-            order = 5
-        created_at = int(time.time()//1000)
-        kind = 'round'
-        task_key = datastore_client.key(kind, created_at)
-        task = datastore.Entity(key=task_key)
-        task['title'] = title
-        task['questions'] = list(questions)
-        task['order'] = order
-        task['created_at'] = created_at
-        task['active'] = False
-        datastore_client.put(task)
+
+@app.route('/quiz/status')
+def send_quiz_status():
+    #check if quiz iz active.
+    task_key = datastore_client.key('activator', 'quiz')
+    quiz = datastore_client.get(task_key)
+    if quiz is None:
+        return jsonify({'quiz_status': 0})
+    else:
+        status = quiz['status']
+        if int(status) != 1:
+            return jsonify({'quiz_status': 0})
+    
+    #if yes, check the current round
+    task_key = datastore_client.key('activator', 'round')
+    round_info = datastore_client.get(task_key)
+    if round_info is None:
+        return jsonify({'quiz_status': 0})
+    current = round_info['current_round']
+    return jsonify({'quiz_status': 1, 'current_round': current});
+
+@app.route('/round/activate/<round_name>', methods=['POST'])
+def activate_round(round_name):
+    kind = 'activator'
+    name = 'round'
+    task_key = datastore_client.key(kind, name)
+    task = datastore.Entity(task_key)
+    task['current_round'] = round_name
+    datastore_client.put(task)
+    return jsonify(['success'])
+
+@app.route('/quiz/activate/<boolean>', methods=['POST'])
+def activate_quiz(boolean):
+    kind = 'activator'
+    name = 'quiz'
+    task_key = datastore_client.key(kind, name)
+    task  = datastore.Entity(task_key)
+    task['status'] = boolean
+    datastore_client.put(task)
+    return jsonify(['success'])
 
 @app.route('/rounds/all')
 def send_all_rounds():

@@ -23,8 +23,8 @@ function getJSON(url, data={}) {
 	return get(url, data).then(JSON.parse);
 }
 
-function post(url, data) {
-
+function post(url, data={}) {
+	console.log('posting data ', data, ' at url ', url);
 	return new Promise(function(resolve, reject) {
 		const xhr = new XMLHttpRequest();
 
@@ -47,7 +47,7 @@ function post(url, data) {
 	});
 }
 
-function postJSON(url, data) {
+function postJSON(url, data={}) {
 	return post(url, data).then(JSON.parse);
 }
 
