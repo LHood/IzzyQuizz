@@ -10,7 +10,7 @@ import json
 import httplib2
 
 from flask import Flask, Response, request, session, g, redirect, url_for, \
-        abort, render_template, flash, send_from_directory, jsonify
+    abort, render_template, flash, send_from_directory, jsonify
 
 from apiclient import discovery
 from oauth2client import client
@@ -31,16 +31,21 @@ with open(questions_path, "r") as questions_file:
 with open(results_path, "r") as results_file:
     results_data = json.loads(results_file.read())
 
+
 @app.route('/closure/<path:path>')
 def serve_closure(path):
     return send_from_directory('static/closure-library/closure', path)
+
+
 @app.route('/jasmine/<path:path>')
 def serve_jasmine(path):
     return send_from_directory('jasmine', path)
-@app.route('/js/<path:path>')
 
+
+@app.route('/js/<path:path>')
 def serve_js_content(path):
     return send_from_directory('js', path)
+
 
 @app.route('/')
 def index():
@@ -51,23 +56,25 @@ def index():
         return render_template('home.html')
     else:
         access_token = credentials.access_token
-        info_link = 'https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token='+access_token
+        info_link = 'https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=' + access_token
         user_info = requests.get(info_link).content.decode()
         user_info = json.loads(user_info)
-        return render_template('quiz.html',user_info=user_info)
+        return render_template('quiz.html', user_info=user_info)
+
 
 @app.route('/user')
 def send_creds():
     try:
         assert 'credentials' in session
-    except:
+    except BaseException:
         return "credentials expired. Please go back to the home page to login"
-    
+
     credentials = client.OAuth2Credentials.from_json(session['credentials'])
     access_token = credentials.access_token
-    info_link = 'https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token='+access_token
+    info_link = 'https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=' + access_token
     user_info = requests.get(info_link).content.decode()
     return user_info
+
 
 @app.route('/manage')
 def send_manage_page():
@@ -75,17 +82,22 @@ def send_manage_page():
         return render_template('manage.html')
     return redirect(url_for('index'))
 
-@app.route('/<filename>'+'.html')
+
+@app.route('/<filename>' + '.html')
 def return_template(filename):
     if 'credentials' not in session:
         return render_template('home.html')
-    return render_template(filename+'.html')
+    return render_template(filename + '.html')
+
 
 @app.route('/oauth2callback')
 def oauth2callback():
-    flow = client.flow_from_clientsecrets('client_secrets.json',
-    scope = 'https://www.googleapis.com/auth/userinfo.profile',
-    redirect_uri=url_for('oauth2callback', _external=True))
+    flow = client.flow_from_clientsecrets(
+        'client_secrets.json',
+        scope='https://www.googleapis.com/auth/userinfo.profile',
+        redirect_uri=url_for(
+            'oauth2callback',
+            _external=True))
     flow.params['include_granted_scopes'] = 'true'
 
     if 'code' not in request.args:
@@ -98,19 +110,21 @@ def oauth2callback():
         save_user()
         return redirect(url_for('index'))
 
+
 def save_user():
-    created_at = int(time.time()//1000)
+    created_at = int(time.time() // 1000)
     kind = 'user'
     credentials = client.OAuth2Credentials.from_json(session['credentials'])
     access_token = credentials.access_token
-    info_link = 'https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token='+access_token
+    info_link = 'https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=' + access_token
     user_info = requests.get(info_link).content.decode()
-    
+
     task_key = datastore_client.key(kind, json.loads(user_info)['id'])
     task = datastore.Entity(key=task_key)
 
     task['info'] = user_info
     datastore_client.put(task)
+
 
 @app.route('/questions')
 def send_questions():
@@ -120,6 +134,8 @@ def send_questions():
 """
 Results Endpoint
 """
+
+
 @app.route('/results')
 def send_results():
     with open('templates/results.html') as results_file:
@@ -130,16 +146,19 @@ def send_results():
 """
 Oauth2 Logout and revoke functionality
 """
+
+
 @app.route('/revoke')
 def revoke_permissions():
     credentials = client.OAuth2Credentials.from_json(session['credentials'])
     try:
         credentials.revoke(httplib2.Http())
-    except:
+    except BaseException:
         pass
     if 'credentials' in session:
         del(session['credentials'])
     return redirect(url_for('index'))
+
 
 @app.route('/logout')
 def logout_user():
@@ -147,11 +166,14 @@ def logout_user():
         del(session['credentials'])
     return redirect(url_for('index'))
 
+
 """
 Results data endpoint.
 This receives requests to retrieve or update results
 data as users respond to questions that they are asked
 """
+
+
 @app.route('/results_data', methods=['GET', 'POST'])
 def handle_results_dataf():
     with open('super_users.json', 'r') as f:
@@ -169,6 +191,7 @@ def handle_results_dataf():
         # handle the get stuff
         pass
     return str(results_data)
+
 
 @app.route('/question/new/<created_at>', methods=['POST'])
 def save_question(created_at):
@@ -190,6 +213,8 @@ def save_question(created_at):
         task['rounds'] = rounds
         datastore_client.put(task)
         return jsonify(str({'success'}))
+
+
 @app.route('/question/delete/<created_at>', methods=["POST"])
 def delete_question(created_at):
     created_at = int(created_at)
@@ -201,7 +226,8 @@ def delete_question(created_at):
     datastore_client.delete(task_key)
     current = datastore_client.get(task_key)
     print('past: ', current, '\n')
-    return jsonify({'response':'success'});
+    return jsonify({'response': 'success'});
+
 
 @app.route('/questions/all')
 def send_all_questions():
@@ -210,14 +236,15 @@ def send_all_questions():
     response = []
     for result in results:
         obj = {}
-        obj['title'],obj['answer'],obj['options'],obj['created_at'],obj['rounds'] = \
-                result['title'],result['answer'],result['options'],result['created_at'],result['rounds']
+        obj['title'], obj['answer'], obj['options'], obj['created_at'], obj['rounds'] = \
+            result['title'], result['answer'], result['options'], result['created_at'], result['rounds']
         response.append(obj)
     return jsonify(response)
 
+
 @app.route('/quiz/status')
 def send_quiz_status():
-    #check if quiz iz active.
+    # check if quiz iz active.
     task_key = datastore_client.key('activator', 'quiz')
     quiz = datastore_client.get(task_key)
     if quiz is None:
@@ -226,14 +253,15 @@ def send_quiz_status():
         status = quiz['status']
         if int(status) != 1:
             return jsonify({'quiz_status': 0})
-    
-    #if yes, check the current round
+
+    # if yes, check the current round
     task_key = datastore_client.key('activator', 'round')
     round_info = datastore_client.get(task_key)
     if round_info is None:
         return jsonify({'quiz_status': 0})
     current = round_info['current_round']
     return jsonify({'quiz_status': 1, 'current_round': current});
+
 
 @app.route('/round/activate/<round_name>', methods=['POST'])
 def activate_round(round_name):
@@ -245,15 +273,17 @@ def activate_round(round_name):
     datastore_client.put(task)
     return jsonify(['success'])
 
+
 @app.route('/quiz/activate/<boolean>', methods=['POST'])
 def activate_quiz(boolean):
     kind = 'activator'
     name = 'quiz'
     task_key = datastore_client.key(kind, name)
-    task  = datastore.Entity(task_key)
+    task = datastore.Entity(task_key)
     task['status'] = boolean
     datastore_client.put(task)
     return jsonify(['success'])
+
 
 @app.route('/rounds/all')
 def send_all_rounds():
@@ -266,6 +296,7 @@ def send_all_rounds():
             new_dict[k] = result[k]
         response.append(new_dict)
     return json.dumps(response)
+
 
 @app.route('/rounds/current')
 def send_current_rounds():
@@ -280,6 +311,7 @@ def send_current_rounds():
             new_dict[k] = result[k]
         response.append(new_dict)
     return json.dumps(response)
+
 
 @app.route('/users/all')
 def send_all_users():
@@ -298,4 +330,4 @@ app.config['SESSION_TYPE'] = 'filesystem'
 
 if __name__ == "__main__":
     app.debug = True
-    app.run(host='0.0.0.0',port=5000, threaded=True)
+    app.run(host='0.0.0.0', port=5000, threaded=True)

@@ -17,12 +17,18 @@ class Endpoints(unittest.TestCase):
     def setUp(self):
         server.app.testing = True
         self.app = server.app.test_client()
+
     def test_root_endpoint(self):
         rv = self.app.get('/')
-        self.assertEqual(rv.status, '302 FOUND', " unexpected status code from the root")
+        self.assertEqual(
+            rv.status,
+            '302 FOUND',
+            " unexpected status code from the root")
+
     def test_oauth2callback(self):
         rv = self.app.get('/oauth2callback')
         print('oauth_callback: \n', rv.data)
+
     def test_questions_endpoint(self):
         rv = self.app.get('/questions')
         with open('data/questions.json', 'r') as my_questions:
