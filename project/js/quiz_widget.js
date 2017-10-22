@@ -5,7 +5,7 @@ goog.require('goog.dom');
 
 function getUserData() {
 	return new Promise(function(resolve, reject) {
-		XhrService.getJSON('/user').then(user => {resolve(user)});
+		XhrService.getJSON('/user').then(user => {resolve(JSON.parse(user))});
 	});
 }
 
