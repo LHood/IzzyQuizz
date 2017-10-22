@@ -73,7 +73,7 @@ def send_creds():
     access_token = credentials.access_token
     info_link = 'https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=' + access_token
     user_info = requests.get(info_link).content.decode()
-    return user_info
+    return jsonify(user_info)
 
 
 @app.route('/manage')
@@ -241,6 +241,36 @@ def send_all_questions():
         response.append(obj)
     return jsonify(response)
 
+@app.route('/questions/current')
+def send_current_questions():
+    task_key = datastore_client.key('activator', 'quiz')
+    quiz = datastore_client.get(task_key)
+    if quiz is None:
+        return jsonify([])
+    else:
+        status = quiz['status']
+        if int(status) != 1:
+            return jsonify([])
+    
+    #if yes, check the current round
+    task_key = datastore_client.key('activator', 'round')
+    round_info = datastore_client.get(task_key)
+    if round_info is None:
+        return jsonify([])
+    current_round = round_info['current_round']
+    
+    #Now, find questions with the current round
+    query = datastore_client.query(kind='question')
+    results = list(query.fetch())
+    response = []
+    for result in results:
+        rounds = result['rounds']
+        if str(current_round) in rounds:
+            obj = {}
+            obj['title'],obj['answer'],obj['options'],obj['created_at'] = \
+                    result['title'],result['answer'],result['options'],result['created_at']
+            response.append(obj)
+    return jsonify(response)
 
 @app.route('/quiz/status')
 def send_quiz_status():

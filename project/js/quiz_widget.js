@@ -24,5 +24,54 @@ class userWidget {
 		});
 	}
 }
+
+class quizProcessor {
+	constructor(){
+		this.all_questions = undefined;
+		this.current_questions = undefined;
+		this.current_status = undefined;
+	}
+
+	load_status() {
+
+		return new Promise((resolve) => {
+			XhrService.getJSON('/quiz/status').then( (response) => {
+				this.current_status = response; Promise.resolve(response)})
+				.then((response) => {
+					resolve(response)});
+		});	
+	}
+	load_all_questions () {
+	
+		return new Promise((resolve) => {
+			XhrService.getJSON('/questions/all').then( (response) => {this.all_questions = response}).then(() => {Promise.resolve('done')});
+		});
+	}
+	generate_current_questions () {
+		const quiz_status = this.current_status.quiz_status;
+		if (quiz_status == 0){
+			return []
+		
+		}
+		const current_round = this.current_status.current_round;
+		results = []
+
+		for(question of this.all_questions) {
+			if(question.rounds.indexOf(current_round) >=0 ) {
+				results.push(question)
+			
+			}
+		
+		}
+		return results;
+
+	}
+	grade_quiz() {
+		const all_forms = document.getElementsByClassName('user_select_answer')
+	}
+
+
+	
+}
 userWidgetObject = new userWidget()
 userWidgetObject.createContent()
