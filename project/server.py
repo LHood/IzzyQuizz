@@ -26,12 +26,6 @@ dir_path = os.path.dirname(os.path.realpath(__file__))
 questions_path = 'data/questions.json'
 results_path = 'data/results.json'
 
-with open(questions_path, "r") as questions_file:
-    questions_data = json.loads(questions_file.read())
-with open(results_path, "r") as results_file:
-    results_data = json.loads(results_file.read())
-
-
 @app.route('/closure/<path:path>')
 def serve_closure(path):
     return send_from_directory('static/closure-library/closure', path)
@@ -126,15 +120,9 @@ def save_user():
     datastore_client.put(task)
 
 
-@app.route('/questions')
-def send_questions():
-    return str(questions_data)
-
-
 """
-Results Endpoint
+Results Endpoint, allowing the users to see what they got in the quiz
 """
-
 
 @app.route('/results')
 def send_results():
@@ -190,8 +178,7 @@ def handle_results_dataf():
     if request.method == 'GET':
         # handle the get stuff
         pass
-    return str(results_data)
-
+    return []
 
 @app.route('/question/new/<created_at>', methods=['POST'])
 def save_question(created_at):
@@ -314,33 +301,51 @@ def activate_quiz(boolean):
     datastore_client.put(task)
     return jsonify(['success'])
 
+"""
+Grades functionality, that stores users grades to the backend, and manages the returning
+Of the results to be displayed on the main board
+"""
+@app.route('/submit', methods=['POST'])
+def save_user_results():
+    data = json.loads(request.data.decode())
+    kind = 'result'
+    current_round = data['round']
+    user_points = data['points']
+    total_points = data['total']
+    user_id = data['user_id']
+    task_key = datastore_client.key('result', str(user_id)+"_"+str(current_round))
+    task = datastore.Entity(task_key)
+    task['round'] = current_round
+    task['points']  = user_points
+    task['total_points'] = total_points
+    task['user_id'] = user_id
+    datastore_client.put(task)
+    return jsonify(['success'])
 
-@app.route('/rounds/all')
-def send_all_rounds():
-    query = datastore_client.query(kind='round')
+@app.route('/results')
+def render_results_file():
+    return render_template('results.html')
+
+@app.route('/results/data')
+def retrieve_user_results():
+    query = datastore_client.query(kind='result')
     results = list(query.fetch())
     response = []
     for result in results:
-        new_dict = {}
-        for k in result:
-            new_dict[k] = result[k]
-        response.append(new_dict)
-    return json.dumps(response)
+        obj = []
+        obj['round'],obj['points'],obj['total_points'],obj['user_id'] = \
+                result['round'],result['points'],result['total_points'],result['user_id']
+        response.append(obj)
+    return jsonify(response)
 
-
-@app.route('/rounds/current')
-def send_current_rounds():
-    query = datastore_client.query(kind='round')
-    query.add_filter('active', '=', True)
-
-    results = list(query.fetch())
-    response = []
-    for result in result:
-        new_dict = {}
-        for k in result:
-            new_dict[k] = result[k]
-        response.append(new_dict)
-    return json.dumps(response)
+@app.route('/results/delete/', methods=['POST'])
+def delete_user_result():
+    data = json.loads(request.data.decode())
+    user_id = data['user_id'],
+    current_round = data['round']
+    task_key = datastore_client.key('result', str(user_id)+"_"+str(current_round))
+    datastore_client.delete(task_key)
+    return jsonify([])
 
 
 @app.route('/users/all')
