@@ -43,6 +43,7 @@ input.answer_option {
 
 #quizHolder {
 	padding: 5px;
+	min-height: 200px;
 }
 #question_gadget {
 	margin-bottom: 5px;

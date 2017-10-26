@@ -78,7 +78,14 @@ class quizDisplay {
 		const all_questions = this.quiz_data.all_questions;
 		const current_questions = this.quiz_data.current_questions;
 		const current_status = this.quiz_data.current_status;
-
+		if (current_questions.length == 0) {
+			const warning = goog.dom.createDom('p', {}, 'The Trivia game is currently not active. Please come back another time');
+			warning.style.color = 'red';
+			const instr = document.getElementById('instructions');
+			instr.innerHTML = '';
+			instr.append(warning);
+			return "";
+		}
 		const gadgets = this.generate_gadgets(current_questions);
 		const submit_button = this.generate_submit_button();
 		
@@ -139,7 +146,7 @@ class quizDisplay {
 		});
 		return button
 	}
-}
+};
 
 class quizGrader {
 	constructor(current_questions){
@@ -156,6 +163,21 @@ class quizGrader {
 			}
 
 		}
+		return {'user_grade': user_grade, 'total_grade': total_grade};
+	}
+	markResults() {
+
+		console.log('marking user results');
+	}
+
+	displayGrades() {
+
+		// Sould show the values returned by this.grade() to the user
+		// Should mark the right and wrong questions in the users terminal
+	}
+
+	sendGrades() {
+		// Should send the grades to the server
 	}
 }
 
