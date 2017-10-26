@@ -21,3 +21,29 @@ div.user-holder.z-depth-1{
 	float: right;
 	padding: 10px;
 }
+
+p.instructions {
+	font-size: 20px;
+	margin-bottom: 20px;
+
+}
+div.options_holder {
+	min-height: 100px;
+	padding: 10px;
+}
+input.answer_option {
+	opacity: 100;
+	display: block;
+	background-color: red;
+}
+#submit_button {
+	margin-top: 30px;
+
+}
+
+#quizHolder {
+	padding: 5px;
+}
+#question_gadget {
+	margin-bottom: 5px;
+}

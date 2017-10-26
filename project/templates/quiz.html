@@ -12,12 +12,17 @@
  			 crossorigin="anonymous"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.js"></script>
 	</head>
-	<body class='z-depth-2'>
-		<h3>MIT African Students Association </h3>
+	<body>
+		<h3>MIT African Students Association</h3>
+		<div id="user_data"></div>
+		<p class="instructions"><em>Welcome to MIT ASA Trivia Portal. Please answer the questions below, 
+		<br>and press the submit button below the questions to submit 
+		your answers and check your results</em></p>
+		<div id="quizHolder" class="z-depth-1"></div>
 		<script src="/closure/goog/base.js"></script>
 		<script src="/js/module_tools.js"></script>
 		<script src="/js/xhr_service.js"></script>
 		<script src="/js/quiz_init.js"></script>
-		<script src="/js/quiz_widget.js"></script>
+		<script src="/js/quiz/widget.js"></script>
 	</body>
 </html>
