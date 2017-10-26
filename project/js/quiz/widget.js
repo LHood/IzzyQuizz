@@ -68,16 +68,13 @@ class quizDisplay {
 	}
 
 	build(target) {
-		console.log('initializing quiz build');
 		return new Promise((resolve) => {
 			this.quiz_data.load_all().then(() => {console.log('resolved all data'); resolve('done');});
 		}).then((response) => {
-			console.log('goint to display quiz')
 			this.display_quiz(target)});
 	}
 	// Target is the target element where the quiz should be displayed in. (It is a Node element)
 	display_quiz(target){
-		console.log('initializing display');
 		const all_questions = this.quiz_data.all_questions;
 		const current_questions = this.quiz_data.current_questions;
 		const current_status = this.quiz_data.current_status;
@@ -90,7 +87,6 @@ class quizDisplay {
 
 	}
 	generate_gadgets(questions) {
-		console.log('generating gadgets')
 		const results = []
 		for(const question of questions ) {
 		
@@ -100,8 +96,6 @@ class quizDisplay {
 	}
 
 	generate_gadget(question) {
-		console.log('generating gadget for question ');
-
 		const title = question.title
 		const titleElement = goog.dom.createDom('h5', {}, title);
 		const options = question.options
@@ -139,10 +133,32 @@ class quizDisplay {
 	}
 	generate_submit_button() {
 		const button = goog.dom.createDom('a', { id: 'submit_button', className: 'btn waves-effect waves-light button'}, 'Submit');
-		button.addEventListener('click', () => {window.grade_quiz()});
+		button.addEventListener('click', () => {
+			const event = new Event('gradeQuiz');
+			window.dispatchEvent('gradeQuiz');
+		});
 		return button
 	}
 }
+
+class quizGrader {
+	constructor(current_questions){
+		this.current_questions = current_questions;
+	}
+	grade() {
+		const total_grade = this.current_questions.length;
+		let user_grade = 0
+		for (const question of this.current_questions) {
+			current_answer = '';
+			real_answer = question.answer;
+			if (current_answer == real_answer) {
+				user_grade += 1
+			}
+
+		}
+	}
+}
+
 
 userWidgetObject = new userWidget()
 userWidgetObject.createContent()
