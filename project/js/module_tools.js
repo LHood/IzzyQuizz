@@ -9,7 +9,7 @@ goog.require('goog.dom');
 function append_js(modules) {
 	for (module of modules) {
 		const node = goog.dom.createDom('script', {'src': module});
-		document.body.append(node);
+		document.body.appendChild(node);
 		console.log('loaded js module ', module);
 	}
 }
@@ -17,7 +17,7 @@ function append_js(modules) {
 function append_css(modules) {
 	for (module of modules) {
 		const node = goog.dom.createDom('link', {'rel': 'stylesheet', 'href': module});
-		document.head.append(node);
+		document.head.appendChild(node);
 		console.log('loaded css module ', module);
 	}
 }
