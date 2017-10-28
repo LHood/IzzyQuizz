@@ -23,6 +23,6 @@ const bottomHolder = goog.dom.createDom('div', {'className': 'bottom_holder'}, [
 
 const mainHolder = goog.dom.createDom('div', {'className': 'main_holder'},
 	[topHolder, bodyHolder]);
-document.body.append(mainHolder);
-//goog.events.listen(window, goog.events.EventType.LOAD, {document.body.append(mainHolder)});
+document.body.appendChild(mainHolder);
+//goog.events.listen(window, goog.events.EventType.LOAD, {document.body.appendChild(mainHolder)});
 

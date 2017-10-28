@@ -21,7 +21,7 @@ class userWidget {
 			const userHolder = goog.dom.createDom('div', {className: 'user-holder z-depth-1'}, [userImage, nameHolder, logoutButton]);
 			const mainHolder = goog.dom.createDom('div', null, [userHolder]);
 			const userDataNode = document.getElementById('user_data');
-			userDataNode.append(mainHolder);
+			userDataNode.appendChild(mainHolder);
 		});
 	}
 }
@@ -83,14 +83,14 @@ class quizDisplay {
 			warning.style.color = 'red';
 			const instr = document.getElementById('instructions');
 			instr.innerHTML = '';
-			instr.append(warning);
+			instr.appendChild(warning);
 			return "";
 		}
 		const gadgets = this.generate_gadgets(current_questions);
 		const submit_button = this.generate_submit_button();
 		
 		const quiz_holder = goog.dom.createDom('div', {id:'quiz_holder'}, gadgets.concat([submit_button]));
-		target.append(quiz_holder);
+		target.appendChild(quiz_holder);
 
 	}
 	generate_gadgets(questions) {
@@ -217,8 +217,8 @@ class quizGrader {
 		const element = goog.dom.createDom('h5', {className: 'results-display'}, [feedback]); 
 		const instructions = document.getElementById('instructions');
 		instructions.innerHTML = ''
-		instructions.append(element);
-		instructions.append(toasty);
+		instructions.appendChild(element);
+		instructions.appendChild(toasty);
 		// Sould show the values returned by this.grade() to the user
 		// Should mark the right and wrong questions in the users terminal
 	}

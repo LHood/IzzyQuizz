@@ -25,7 +25,7 @@ class displayer {
 		target.innerHTML = '';
 		const view = this.generate_results_table();
 		const viewHolder = goog.dom.createDom('view', {className: 'z-index-1'}, view);
-		target.append(viewHolder);
+		target.appendChild(viewHolder);
 	}
 
 	generate_results_table() {
@@ -34,11 +34,11 @@ class displayer {
 		
 		const headTr = goog.dom.createDom('tr', {}, this.generate_head_elements());
 		const HEAD = goog.dom.createDom('thead', null, headTr);
-		table.append(HEAD);
+		table.appendChild(HEAD);
 
 		const bodyTrs = this.generate_row_elements();
 		const BODY = goog.dom.createDom('tbody', null, bodyTrs);
-		table.append(BODY);
+		table.appendChild(BODY);
 		return table;
 	}
 
