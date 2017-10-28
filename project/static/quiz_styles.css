@@ -3,12 +3,16 @@ body {
 	margin: auto;
 	max-width: 90%;
 }
+
 img.user-image {
 	max-width: 50px;
 	max-height: 50px;
 }
 div.name-holder {
 	margin-top: 0px;
+}
+#user_data {
+	z-index: 10;
 }
 a.logout-button {
 	display: block;
@@ -30,11 +34,24 @@ p.instructions {
 div.options_holder {
 	min-height: 100px;
 	padding: 10px;
+	text-align: left;
+	margin-left: 35%;
+	margin-right: 30%;
 }
 input.answer_option {
 	opacity: 100;
 	display: block;
 	background-color: red;
+}
+
+#instructions {
+	background: rgba(51, 122, 183, 0.4); /* For browsers that do not support gradients */
+    background: -webkit-linear-gradient(rgba(51, 122, 183, 0.4), white); /* For Safari 5.1 to 6.0 */
+    background: -o-linear-gradient(rgba(51, 122, 183, 0.4), white); /* For Opera 11.1 to 12.0 */
+    background: -moz-linear-gradient(rgba(51, 122, 183, 0.4), white); /* For Firefox 3.6 to 15 */
+    background: linear-gradient(rgba(51, 122, 183, 0.4), white); /* Standard syntax */
+	min-height: 50px;
+	padding: 10px;
 }
 #submit_button {
 	margin-top: 30px;
@@ -47,4 +64,8 @@ input.answer_option {
 }
 #question_gadget {
 	margin-bottom: 5px;
+	text-align: left;
+}
+.toasty {
+	display: block;
 }

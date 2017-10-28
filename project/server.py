@@ -8,6 +8,7 @@ import os
 import sys
 import json
 import httplib2
+import time
 
 from flask import Flask, Response, request, session, g, redirect, url_for, \
     abort, render_template, flash, send_from_directory, jsonify
@@ -58,6 +59,9 @@ def index():
 
 @app.route('/user')
 def send_creds():
+    return jsonify(get_user_info())
+
+def get_user_info():
     try:
         assert 'credentials' in session
     except BaseException:
@@ -67,7 +71,7 @@ def send_creds():
     access_token = credentials.access_token
     info_link = 'https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=' + access_token
     user_info = requests.get(info_link).content.decode()
-    return jsonify(user_info)
+    return user_info
 
 
 @app.route('/manage')
@@ -167,7 +171,6 @@ def handle_results_dataf():
     with open('super_users.json', 'r') as f:
         super_users = json.load(f)
     user = requests.get('http://127.0.0.1:5000/user').content.decode()
-    print('user: \n', user)
     if request.method == 'POST':
         # Handle the post stuff
 
@@ -209,10 +212,8 @@ def delete_question(created_at):
     kind = 'question'
     task_key = datastore_client.key(kind, created_at)
     current = datastore_client.get(task_key)
-    print('current: ', current, '\n')
     datastore_client.delete(task_key)
     current = datastore_client.get(task_key)
-    print('past: ', current, '\n')
     return jsonify({'response': 'success'});
 
 
@@ -307,36 +308,75 @@ Of the results to be displayed on the main board
 """
 @app.route('/submit', methods=['POST'])
 def save_user_results():
+    user_info = json.loads(get_user_info());
     data = json.loads(request.data.decode())
     kind = 'result'
     current_round = data['round']
     user_points = data['points']
     total_points = data['total']
-    user_id = data['user_id']
+    user_id = user_info['id']
     task_key = datastore_client.key('result', str(user_id)+"_"+str(current_round))
+    current_result = datastore_client.get(task_key)
+    if current_result is not None:
+        points = current_result['points']
+        return jsonify(['Keeping the score of '+str(points)+' that you had before '])
     task = datastore.Entity(task_key)
     task['round'] = current_round
     task['points']  = user_points
     task['total_points'] = total_points
     task['user_id'] = user_id
     datastore_client.put(task)
-    return jsonify(['success'])
+    return jsonify(['Your score has been submitted'])
 
 @app.route('/results')
 def render_results_file():
     return render_template('results.html')
 
 @app.route('/results/data')
+def send_user_results():
+    #Load all users database
+    users = get_all_users();
+    users_data = {}
+
+    for user in users:
+        user_id = int(json.loads(user)['id'])
+        users_data[user_id] = user
+
+
+    user_results = retrieve_user_results();
+    response = {}
+
+    for result in user_results:
+        user_id = int(result['user_id'])
+        if not user_id in response:
+            # First load the points
+            response[user_id] = {}
+            points = sum([int(result_['points']) for result_ in user_results if int(result_['user_id']) == user_id])
+            response[user_id]['points'] = points
+
+            #Now load the user Picture
+            picture_link = json.loads(users_data[user_id])['picture']
+            response[user_id]['picture'] = picture_link
+
+            #Now load the user name
+
+            user_name = json.loads(users_data[user_id])['name']
+            response[user_id]['name'] = user_name
+
+    response = [ response[index] for index in response];
+    response = sorted(response, key= lambda x: x['points'], reverse=True);
+    return jsonify(response);
+
 def retrieve_user_results():
     query = datastore_client.query(kind='result')
     results = list(query.fetch())
     response = []
     for result in results:
-        obj = []
+        obj = {}
         obj['round'],obj['points'],obj['total_points'],obj['user_id'] = \
                 result['round'],result['points'],result['total_points'],result['user_id']
         response.append(obj)
-    return jsonify(response)
+    return response
 
 @app.route('/results/delete/', methods=['POST'])
 def delete_user_result():
@@ -350,14 +390,16 @@ def delete_user_result():
 
 @app.route('/users/all')
 def send_all_users():
+    return jsonify(get_all_users());
+
+def get_all_users():
     query = datastore_client.query(kind='user')
     results = list(query.fetch())
     response = []
     for result in results:
         if 'info' in result:
             response.append(result['info'])
-            print(json.loads(result['info']))
-    return json.dumps(response)
+    return response
 
 
 app.secret_key = 'super-secret-key'

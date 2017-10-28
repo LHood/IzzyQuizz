@@ -6,15 +6,15 @@ const title = goog.dom.createDom('h2', {'className': 'main_title'},'MIT African 
 const mainLogo = goog.dom.createDom('img', {'className': 'asa_logo', 'src': '/static/asa_logo.jpg'});
 const topHolder = goog.dom.createDom('div', {'className': 'top_holder'}, [/** mainLogo , **/ title]);
 
-const textToUser = goog.dom.createDom('h6', {'className': 'text_to_user'},
-	['Dear User, thank you for using MIT ASA quiz portal.' +
-	'Please login to be able to take the quiz']);
+const textToUser = goog.dom.createDom('h7', {'className': 'text_to_user'},
+	['Welcome to MIT ASA Trivia game portal. ' +
+	'Please login to join our Trivia game and get a chance to compete for a prize tonight.']);
 const loginLogo = goog.dom.createDom('img', {'className': 'login_logo',
 	'src': '/static/login_google.png'});
 const linkToLogin = goog.dom.createDom('a', {'className': 'link_to_login', 'href': '/oauth2callback'},
 	[loginLogo]);
 
-const bodyHolder = goog.dom.createDom('div', {'className': 'body_holder z-depth-1'},
+const bodyHolder = goog.dom.createDom('div', {'className': 'body_holder'},
 	[textToUser, linkToLogin]);
 
 const bottomText = goog.dom.createDom('p1', {'className': 'bottom_text'},

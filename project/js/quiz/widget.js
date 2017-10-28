@@ -5,7 +5,7 @@ goog.require('goog.dom');
 
 function getUserData() {
 	return new Promise(function(resolve, reject) {
-		XhrService.getJSON('/user').then(user => {resolve(JSON.parse(user))});
+		XhrService.getJSON('/user').then(user => {window.user_data = user; resolve(JSON.parse(user))});
 	});
 }
 
@@ -109,7 +109,9 @@ class quizDisplay {
 		const answer = question.answer
 		const shuffled_options = this.shuffle_array(options.concat([answer]))
 		const optionsElement = this.generate_options_element(question);
-		const gadget = goog.dom.createDom('div', {className: 'question_gadget z-depth-1'}, [titleElement, optionsElement]);
+		const gadget = goog.dom.createDom('div', 
+			{id: 'question_gadget_'+question.created_at.toString(), className: 'question_gadget z-depth-1'}, 
+			[titleElement, optionsElement]);
 		return gadget
 	}
 	//Courtesy of stackoverflow
@@ -141,43 +143,98 @@ class quizDisplay {
 	generate_submit_button() {
 		const button = goog.dom.createDom('a', { id: 'submit_button', className: 'btn waves-effect waves-light button'}, 'Submit');
 		button.addEventListener('click', () => {
-			const event = new Event('gradeQuiz');
-			window.dispatchEvent('gradeQuiz');
+			const grader = new quizGrader(this.quiz_data);
+			grader.grade();
+			grader.markResults();
+			grader.displayGrades();
+			grader.sendGrades();
+			window.scrollTo(0, 0);
 		});
 		return button
 	}
 };
 
 class quizGrader {
-	constructor(current_questions){
-		this.current_questions = current_questions;
+	constructor(quiz_data){
+		this.current_questions = quiz_data.current_questions;
+		this.results = undefined;
+		this.user_data = window.user_data;
+		this.quiz_data = quiz_data;
 	}
 	grade() {
 		const total_grade = this.current_questions.length;
-		let user_grade = 0
+		let user_grade = 0;
+		let results = {};
 		for (const question of this.current_questions) {
-			current_answer = '';
-			real_answer = question.answer;
+			const dummyElem = goog.dom.createDom('p', {value: Math.random()});
+			const elem  = document.querySelector('input[name=answer_for'+question.created_at.toString()+']:checked') || dummyElem;
+			const current_answer = elem.value
+			console.log('currrent answer: ',current_answer);
+			const real_answer = question.answer;
 			if (current_answer == real_answer) {
+				results[question.created_at] = 'correct'
 				user_grade += 1
+			} else {
+				results[question.created_at] = 'incorrect'
 			}
 
 		}
-		return {'user_grade': user_grade, 'total_grade': total_grade};
+		console.log({'user_grade': user_grade, 'total_grade': total_grade, 'results': results});
+		this.results = {'user_grade': user_grade, 'total_grade': total_grade, 'results': results}
+		return this.results;
 	}
-	markResults() {
 
-		console.log('marking user results');
+	markResults() {
+		const results_data = this.results.results || this.grade().results;
+		for(const question_id in results_data){
+
+			const element = document.getElementById('question_gadget_' + question_id.toString());
+			if(results_data[question_id] == 'correct'){
+
+				element.style.background = 'rgba(0, 255, 0, 0.2)';
+			} else {
+
+				element.style.background = 'rgba(255, 69, 0, 0.2)';
+			}
+		}
 	}
 
 	displayGrades() {
+		const my_results = this.results || this.grade();
+		const breakpoint = goog.dom.createDom('br');
+		let feedback = 'You scored '+my_results.user_grade.toString() + ' out of '+my_results.total_grade.toString();
+		let to_toast = '';
 
+		if (my_results.user_grade != my_results.total_grade) {
+			to_toast += ' You can keep guessing different answers to see which ones are correct, ' +
+			'but only your first submission will be recorded and considered for the prize. ';
+		}
+
+		else {
+			to_toast += ' It seems like you got all the answers correct. Cheers! ';
+		}
+		const toasty = goog.dom.createDom('em', {className: 'toasty'}, to_toast);
+		const element = goog.dom.createDom('h5', {className: 'results-display'}, [feedback]); 
+		const instructions = document.getElementById('instructions');
+		instructions.innerHTML = ''
+		instructions.append(element);
+		instructions.append(toasty);
 		// Sould show the values returned by this.grade() to the user
 		// Should mark the right and wrong questions in the users terminal
 	}
 
 	sendGrades() {
 		// Should send the grades to the server
+		// the server expects data round, user_id, points, total
+		const grades = this.results.user_grade || this.grade().user_grade;
+		const total = this.results.total_grade || this.grade().total_grade;
+		console.log('user data: ', this.user_data);
+		const userId = this.user_data["id"];
+		const current_round = this.quiz_data.current_status.current_round;
+
+		const requestData = {'round': current_round, 'user_id': userId, 'points': grades, 'total': total}
+		console.log('going to send ', requestData);
+		XhrService.postJSON('/submit', requestData).then((response) => {Materialize.toast(response, 3000)});
 	}
 }
 
