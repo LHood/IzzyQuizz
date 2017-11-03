@@ -127,11 +127,18 @@ class quizDisplay {
 		this.shuffle_array(all_options);
 		const option_elements = []
 		for(const option of all_options) {
-			const hash_value = question.created_at.toString()  + "_" + option.length.toString();
+			const hash_value = question.created_at.toString()  + "_" + Math.random().toString();
 			const selector = goog.dom.createDom('input', {name: 'answer_for' + question.created_at.toString(), 
 				id: hash_value, className: 'answer_option', type: 'radio', value: option, 
 				target_question: question.created_at,}, option);
 			const label = goog.dom.createDom('label', {for: hash_value}, option);
+			label.addEventListener('click', () => {
+				console.log("user clicked me");
+				const element = document.getElementById(hash_value);
+				console.log('clicked ', element);
+				element.checked = true;
+				console.log('element checked : ', element.checked);
+			})
 			const element = goog.dom.createDom('div', {}, [selector, label]);
 			option_elements.push(element)
 		}
