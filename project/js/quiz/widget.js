@@ -67,6 +67,7 @@ class quizDisplay {
 	}
 
 	build(target) {
+		console.log('going to build on target ', target)
 		return new Promise(function(resolve){
 			this.quiz_data.load_all().then(function(){console.log('resolved all data'); resolve('done');});
 		}.bind(this)).then(function(response){
@@ -74,6 +75,7 @@ class quizDisplay {
 	}
 	// Target is the target element where the quiz should be displayed in. (It is a Node element)
 	display_quiz(target){
+		console.log('going to display the quiz on ', target)
 		var all_questions = this.quiz_data.all_questions;
 		var current_questions = this.quiz_data.current_questions;
 		var current_status = this.quiz_data.current_status;
@@ -85,28 +87,32 @@ class quizDisplay {
 			instr.appendChild(warning);
 			return "";
 		}
+
 		var gadgets = this.generate_gadgets(current_questions);
 		var submit_button = this.generate_submit_button();
-		
 		var quiz_holder = goog.dom.createDom('div', {id:'quiz_holder'}, gadgets.concat([submit_button]));
-		target.appendChild(quiz_holder);
+		var target_ = document.getElementById('quizHolder')
+		target_.innerHTML = '';
+		target_.appendChild(quiz_holder);
+		document.getElementById('announcement').innerHTML = '';
 
 	}
 	generate_gadgets(questions) {
 		var results = []
-		for(var question of questions ) {
+		for(var questionIndex in questions ) {
 		
-			results.push(this.generate_gadget(question));
+			results.push(this.generate_gadget(questions[questionIndex]));
 		}
 		return results;
 	}
 
 	generate_gadget(question) {
-		var title = question.title
+		console.log('generating unique gadget for question ', question);
+		var title = question.title;
 		var titleElement = goog.dom.createDom('h5', {}, title);
-		var options = question.options
-		var answer = question.answer
-		var shuffled_options = this.shuffle_array(options.concat([answer]))
+		var options = question.options;
+		var answer = question.answer;
+		console.log('going to generate options element');
 		var optionsElement = this.generate_options_element(question);
 		var gadget = goog.dom.createDom('div', 
 			{id: 'question_gadget_'+question.created_at.toString(), className: 'question_gadget z-depth-1'}, 
@@ -116,10 +122,12 @@ class quizDisplay {
 	//Courtesy of stackoverflow
 	// On link https://stackoverflow.com/questions/6274339/how-can-i-shuffle-an-array
 	shuffle_array(a) {
+		console.log('I am shuffling ', a)
 		for (var i = a.length - 1; i > 0; i--){
 			var j = Math.floor(Math.random() * i+1);
-			[a[i],a[j]] = [a[j],a[i]];
+			a[i],a[j] = a[j],a[i];
 		}
+		return a
 	}
 	generate_options_element(question) {
 		var all_options = question.options.concat([question.answer])

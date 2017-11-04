@@ -43,7 +43,7 @@ def serve_js_content(path):
 
 
 @app.route('/')
-def index():
+def index():    
     if 'credentials' not in session:
         return render_template('home.html')
     credentials = client.OAuth2Credentials.from_json(session['credentials'])
