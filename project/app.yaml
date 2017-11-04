@@ -1,6 +1,7 @@
 runtime: python
 env: flex
 entrypoint: gunicorn -b :$PORT server:app
+version: trivia_day
 runtime_config:
         python_version: 3
 
