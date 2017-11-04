@@ -12,15 +12,15 @@ function getUserData() {
 class userWidget {
 	createContent() {
 		getUserData().then(function(userData){
-			const userImage = goog.dom.createDom('img', {'src': userData.picture, 'className': 'user-image'});
-			const firstName = userData.given_name;
-			const fullName = userData.name;
-			const nameHolder = goog.dom.createDom('div', {className: 'name-holder'}, fullName);
-			const logoutButton = goog.dom.createDom('a',
+			var userImage = goog.dom.createDom('img', {'src': userData.picture, 'className': 'user-image'});
+			var firstName = userData.given_name;
+			var fullName = userData.name;
+			var nameHolder = goog.dom.createDom('div', {className: 'name-holder'}, fullName);
+			var logoutButton = goog.dom.createDom('a',
 				{'className': 'logout-button waves-effect waves-light btn', href: '/logout'}, 'logout');
-			const userHolder = goog.dom.createDom('div', {className: 'user-holder z-depth-1'}, [userImage, nameHolder, logoutButton]);
-			const mainHolder = goog.dom.createDom('div', null, [userHolder]);
-			const userDataNode = document.getElementById('user_data');
+			var userHolder = goog.dom.createDom('div', {className: 'user-holder z-depth-1'}, [userImage, nameHolder, logoutButton]);
+			var mainHolder = goog.dom.createDom('div', null, [userHolder]);
+			var userDataNode = document.getElementById('user_data');
 			userDataNode.appendChild(mainHolder);
 		}.bind(this));
 	}
@@ -74,27 +74,27 @@ class quizDisplay {
 	}
 	// Target is the target element where the quiz should be displayed in. (It is a Node element)
 	display_quiz(target){
-		const all_questions = this.quiz_data.all_questions;
-		const current_questions = this.quiz_data.current_questions;
-		const current_status = this.quiz_data.current_status;
+		var all_questions = this.quiz_data.all_questions;
+		var current_questions = this.quiz_data.current_questions;
+		var current_status = this.quiz_data.current_status;
 		if (current_questions.length == 0) {
-			const warning = goog.dom.createDom('p', {}, 'The Trivia game is currently not active. Please come back another time');
+			var warning = goog.dom.createDom('p', {}, 'The Trivia game is currently not active. Please come back another time');
 			warning.style.color = 'red';
-			const instr = document.getElementById('instructions');
+			var instr = document.getElementById('instructions');
 			instr.innerHTML = '';
 			instr.appendChild(warning);
 			return "";
 		}
-		const gadgets = this.generate_gadgets(current_questions);
-		const submit_button = this.generate_submit_button();
+		var gadgets = this.generate_gadgets(current_questions);
+		var submit_button = this.generate_submit_button();
 		
-		const quiz_holder = goog.dom.createDom('div', {id:'quiz_holder'}, gadgets.concat([submit_button]));
+		var quiz_holder = goog.dom.createDom('div', {id:'quiz_holder'}, gadgets.concat([submit_button]));
 		target.appendChild(quiz_holder);
 
 	}
 	generate_gadgets(questions) {
-		const results = []
-		for(const question of questions ) {
+		var results = []
+		for(var question of questions ) {
 		
 			results.push(this.generate_gadget(question));
 		}
@@ -102,13 +102,13 @@ class quizDisplay {
 	}
 
 	generate_gadget(question) {
-		const title = question.title
-		const titleElement = goog.dom.createDom('h5', {}, title);
-		const options = question.options
-		const answer = question.answer
-		const shuffled_options = this.shuffle_array(options.concat([answer]))
-		const optionsElement = this.generate_options_element(question);
-		const gadget = goog.dom.createDom('div', 
+		var title = question.title
+		var titleElement = goog.dom.createDom('h5', {}, title);
+		var options = question.options
+		var answer = question.answer
+		var shuffled_options = this.shuffle_array(options.concat([answer]))
+		var optionsElement = this.generate_options_element(question);
+		var gadget = goog.dom.createDom('div', 
 			{id: 'question_gadget_'+question.created_at.toString(), className: 'question_gadget z-depth-1'}, 
 			[titleElement, optionsElement]);
 		return gadget
@@ -117,35 +117,35 @@ class quizDisplay {
 	// On link https://stackoverflow.com/questions/6274339/how-can-i-shuffle-an-array
 	shuffle_array(a) {
 		for (let i = a.length - 1; i > 0; i--){
-			const j = Math.floor(Math.random() * i+1);
+			var j = Math.floor(Math.random() * i+1);
 			[a[i],a[j]] = [a[j],a[i]];
 		}
 	}
 	generate_options_element(question) {
-		const all_options = question.options.concat([question.answer])
+		var all_options = question.options.concat([question.answer])
 		this.shuffle_array(all_options);
-		const option_elements = []
-		for(const option of all_options) {
-			const hash_value = question.created_at.toString()  + "_" + Math.random().toString();
-			const selector = goog.dom.createDom('input', {name: 'answer_for' + question.created_at.toString(), 
+		var option_elements = []
+		for(var option of all_options) {
+			var hash_value = question.created_at.toString()  + "_" + Math.random().toString();
+			var selector = goog.dom.createDom('input', {name: 'answer_for' + question.created_at.toString(), 
 				id: hash_value, className: 'answer_option', type: 'radio', value: option, 
 				target_question: question.created_at,}, option);
-			const label = goog.dom.createDom('label', {for: hash_value}, option);
+			var label = goog.dom.createDom('label', {for: hash_value}, option);
 			label.addEventListener('click', function(){
-				const element = document.getElementById(hash_value);
+				var element = document.getElementById(hash_value);
 				element.checked = true;
 			})
-			const element = goog.dom.createDom('div', {}, [selector, label]);
+			var element = goog.dom.createDom('div', {}, [selector, label]);
 			option_elements.push(element)
 		}
-		const result =  goog.dom.createDom('div', {id: 'options_holder_'+question.created_at.toString(), 
+		var result =  goog.dom.createDom('div', {id: 'options_holder_'+question.created_at.toString(), 
 			className: 'options_holder'}, option_elements);
 		return result
 	}
 	generate_submit_button() {
-		const button = goog.dom.createDom('a', { id: 'submit_button', className: 'btn waves-effect waves-light button'}, 'Submit');
+		var button = goog.dom.createDom('a', { id: 'submit_button', className: 'btn waves-effect waves-light button'}, 'Submit');
 		button.addEventListener('click', function(){
-			const grader = new quizGrader(this.quiz_data);
+			var grader = new quizGrader(this.quiz_data);
 			grader.grade();
 			grader.markResults();
 			grader.displayGrades();
@@ -164,15 +164,15 @@ class quizGrader {
 		this.quiz_data = quiz_data;
 	}
 	grade() {
-		const total_grade = this.current_questions.length;
+		var total_grade = this.current_questions.length;
 		let user_grade = 0;
 		let results = {};
-		for (const question of this.current_questions) {
-			const dummyElem = goog.dom.createDom('p', {value: Math.random()});
-			const elem  = document.querySelector('input[name=answer_for'+question.created_at.toString()+']:checked') || dummyElem;
-			const current_answer = elem.value
+		for (var question of this.current_questions) {
+			var dummyElem = goog.dom.createDom('p', {value: Math.random()});
+			var elem  = document.querySelector('input[name=answer_for'+question.created_at.toString()+']:checked') || dummyElem;
+			var current_answer = elem.value
 			console.log('currrent answer: ',current_answer);
-			const real_answer = question.answer;
+			var real_answer = question.answer;
 			if (current_answer == real_answer) {
 				results[question.created_at] = 'correct'
 				user_grade += 1
@@ -187,10 +187,10 @@ class quizGrader {
 	}
 
 	markResults() {
-		const results_data = this.results.results || this.grade().results;
-		for(const question_id in results_data){
+		var results_data = this.results.results || this.grade().results;
+		for(var question_id in results_data){
 
-			const element = document.getElementById('question_gadget_' + question_id.toString());
+			var element = document.getElementById('question_gadget_' + question_id.toString());
 			if(results_data[question_id] == 'correct'){
 
 				element.style.background = 'rgba(0, 255, 0, 0.2)';
@@ -202,8 +202,8 @@ class quizGrader {
 	}
 
 	displayGrades() {
-		const my_results = this.results || this.grade();
-		const breakpoint = goog.dom.createDom('br');
+		var my_results = this.results || this.grade();
+		var breakpoint = goog.dom.createDom('br');
 		let feedback = 'You scored '+my_results.user_grade.toString() + ' out of '+my_results.total_grade.toString();
 		let to_toast = '';
 
@@ -215,9 +215,9 @@ class quizGrader {
 		else {
 			to_toast += ' It seems like you got all the answers correct. Cheers! ';
 		}
-		const toasty = goog.dom.createDom('em', {className: 'toasty'}, to_toast);
-		const element = goog.dom.createDom('h5', {className: 'results-display'}, [feedback]); 
-		const instructions = document.getElementById('instructions');
+		var toasty = goog.dom.createDom('em', {className: 'toasty'}, to_toast);
+		var element = goog.dom.createDom('h5', {className: 'results-display'}, [feedback]); 
+		var instructions = document.getElementById('instructions');
 		instructions.innerHTML = ''
 		instructions.appendChild(element);
 		instructions.appendChild(toasty);
@@ -228,13 +228,13 @@ class quizGrader {
 	sendGrades() {
 		// Should send the grades to the server
 		// the server expects data round, user_id, points, total
-		const grades = this.results.user_grade || this.grade().user_grade;
-		const total = this.results.total_grade || this.grade().total_grade;
+		var grades = this.results.user_grade || this.grade().user_grade;
+		var total = this.results.total_grade || this.grade().total_grade;
 		console.log('user data: ', this.user_data);
-		const userId = this.user_data["id"];
-		const current_round = this.quiz_data.current_status.current_round;
+		var userId = this.user_data["id"];
+		var current_round = this.quiz_data.current_status.current_round;
 
-		const requestData = {'round': current_round, 'user_id': userId, 'points': grades, 'total': total}
+		var requestData = {'round': current_round, 'user_id': userId, 'points': grades, 'total': total}
 		console.log('going to send ', requestData);
 		XhrService.postJSON('/submit', requestData).then(function(response){Materialize.toast(response, 3000)});
 	}
@@ -244,6 +244,6 @@ class quizGrader {
 userWidgetObject = new userWidget()
 userWidgetObject.createContent()
 
-const quizHolder = document.getElementById('quizHolder')
-const quizDisplayObject = new quizDisplay();
+var quizHolder = document.getElementById('quizHolder')
+var quizDisplayObject = new quizDisplay();
 quizDisplayObject.build(quizHolder);
