@@ -4,4 +4,3 @@ const required_js = [
 			];
 const moduleTools = tools.modules;
 moduleTools.append_js(required_js);
-console.log('home_init_executed');
