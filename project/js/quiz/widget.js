@@ -116,7 +116,7 @@ class quizDisplay {
 	//Courtesy of stackoverflow
 	// On link https://stackoverflow.com/questions/6274339/how-can-i-shuffle-an-array
 	shuffle_array(a) {
-		for (let i = a.length - 1; i > 0; i--){
+		for (var i = a.length - 1; i > 0; i--){
 			var j = Math.floor(Math.random() * i+1);
 			[a[i],a[j]] = [a[j],a[i]];
 		}
@@ -165,8 +165,8 @@ class quizGrader {
 	}
 	grade() {
 		var total_grade = this.current_questions.length;
-		let user_grade = 0;
-		let results = {};
+		var user_grade = 0;
+		var results = {};
 		for (var question of this.current_questions) {
 			var dummyElem = goog.dom.createDom('p', {value: Math.random()});
 			var elem  = document.querySelector('input[name=answer_for'+question.created_at.toString()+']:checked') || dummyElem;
@@ -204,8 +204,8 @@ class quizGrader {
 	displayGrades() {
 		var my_results = this.results || this.grade();
 		var breakpoint = goog.dom.createDom('br');
-		let feedback = 'You scored '+my_results.user_grade.toString() + ' out of '+my_results.total_grade.toString();
-		let to_toast = '';
+		var feedback = 'You scored '+my_results.user_grade.toString() + ' out of '+my_results.total_grade.toString();
+		var to_toast = '';
 
 		if (my_results.user_grade != my_results.total_grade) {
 			to_toast += ' You can keep guessing different answers to see which ones are correct, ' +
