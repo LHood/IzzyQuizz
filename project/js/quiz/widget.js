@@ -37,7 +37,7 @@ class quizData {
 		console.log('loading status');
 		return new Promise(function(resolve){
 			XhrService.getJSON('/quiz/status').then(function(response){
-				this.current_status = response; console.log('-- got status response ', response); resolve(response)}.bind(this));
+				this.current_status = response; resolve(response)}.bind(this));
 		}.bind(this));
 	}
 	load_all_questions () {
@@ -131,19 +131,15 @@ class quizDisplay {
 				id: hash_value, className: 'answer_option', type: 'radio', value: option, 
 				target_question: question.created_at,}, option);
 			const label = goog.dom.createDom('label', {for: hash_value}, option);
-			label.addEventListener('click', () => {
-				console.log("user clicked me");
+			label.addEventListener('click', function(){
 				const element = document.getElementById(hash_value);
-				console.log('clicked ', element);
 				element.checked = true;
-				console.log('element checked : ', element.checked);
 			})
 			const element = goog.dom.createDom('div', {}, [selector, label]);
 			option_elements.push(element)
 		}
 		const result =  goog.dom.createDom('div', {id: 'options_holder_'+question.created_at.toString(), 
 			className: 'options_holder'}, option_elements);
-		console.log('returning options element', result);
 		return result
 	}
 	generate_submit_button() {
