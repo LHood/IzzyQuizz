@@ -5,13 +5,13 @@ goog.require('goog.dom');
 
 function getUserData() {
 	return new Promise(function(resolve, reject) {
-		XhrService.getJSON('/user').then((user) => {window.user_data = user; resolve(JSON.parse(user))});
+		XhrService.getJSON('/user').then(function(user){window.user_data = user; resolve(JSON.parse(user))}.bind(this));
 	});
 }
 
 class userWidget {
 	createContent() {
-		getUserData().then(userData => {
+		getUserData().then(function(userData){
 			const userImage = goog.dom.createDom('img', {'src': userData.picture, 'className': 'user-image'});
 			const firstName = userData.given_name;
 			const fullName = userData.name;
@@ -22,7 +22,7 @@ class userWidget {
 			const mainHolder = goog.dom.createDom('div', null, [userHolder]);
 			const userDataNode = document.getElementById('user_data');
 			userDataNode.appendChild(mainHolder);
-		});
+		}.bind(this));
 	}
 }
 
@@ -35,30 +35,29 @@ class quizData {
 
 	load_status() {
 		console.log('loading status');
-		return new Promise((resolve) => {
-			
-			XhrService.getJSON('/quiz/status').then( (response) => {
-				this.current_status = response; console.log('-- got status response ', response); resolve(response)});
-		});
+		return new Promise(function(resolve){
+			XhrService.getJSON('/quiz/status').then(function(response){
+				this.current_status = response; console.log('-- got status response ', response); resolve(response)}.bind(this));
+		}.bind(this));
 	}
 	load_all_questions () {
 	console.log('loading all questions');	
-		return new Promise((resolve) => {
+		return new Promise(function(resolve){
 			XhrService.getJSON('/questions/all')
-			.then((response) => {this.all_questions = response; console.log('all_done'); resolve('done');});
-		});
+			.then(function(response){this.all_questions = response; console.log('all_done'); resolve('done');}.bind(this));
+		}.bind(this));
 	}
 	load_current_questions () {
 	console.log('loading current questions');
-		return new Promise((resolve) => {
+		return new Promise(function(resolve){
 			XhrService.getJSON('/questions/current')
-			.then((response) => {this.current_questions = response; console.log('current_done'); resolve('done');});
-		});
+			.then(function(response){this.current_questions = response; console.log('current_done'); resolve('done');}.bind(this));
+		}.bind(this));
 	}
 	load_all() {
-		return new Promise((resolve) => {
+		return new Promise(function(resolve){
 			resolve(Promise.all([this.load_status(), this.load_all_questions(), this.load_current_questions()]));
-		});
+		}.bind(this));
 	}
 }
 
@@ -68,10 +67,10 @@ class quizDisplay {
 	}
 
 	build(target) {
-		return new Promise((resolve) => {
-			this.quiz_data.load_all().then(() => {console.log('resolved all data'); resolve('done');});
-		}).then((response) => {
-			this.display_quiz(target)});
+		return new Promise(function(resolve){
+			this.quiz_data.load_all().then(function(){console.log('resolved all data'); resolve('done');});
+		}.bind(this)).then(function(response){
+			this.display_quiz(target)}.bind(this));
 	}
 	// Target is the target element where the quiz should be displayed in. (It is a Node element)
 	display_quiz(target){
@@ -149,14 +148,14 @@ class quizDisplay {
 	}
 	generate_submit_button() {
 		const button = goog.dom.createDom('a', { id: 'submit_button', className: 'btn waves-effect waves-light button'}, 'Submit');
-		button.addEventListener('click', () => {
+		button.addEventListener('click', function(){
 			const grader = new quizGrader(this.quiz_data);
 			grader.grade();
 			grader.markResults();
 			grader.displayGrades();
 			grader.sendGrades();
 			window.scrollTo(0, 0);
-		});
+		}.bind(this));
 		return button
 	}
 };
@@ -241,7 +240,7 @@ class quizGrader {
 
 		const requestData = {'round': current_round, 'user_id': userId, 'points': grades, 'total': total}
 		console.log('going to send ', requestData);
-		XhrService.postJSON('/submit', requestData).then((response) => {Materialize.toast(response, 3000)});
+		XhrService.postJSON('/submit', requestData).then(function(response){Materialize.toast(response, 3000)});
 	}
 }
 
