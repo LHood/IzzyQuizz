@@ -107,12 +107,10 @@ class quizDisplay {
 	}
 
 	generate_gadget(question) {
-		console.log('generating unique gadget for question ', question);
 		var title = question.title;
 		var titleElement = goog.dom.createDom('h5', {}, title);
 		var options = question.options;
 		var answer = question.answer;
-		console.log('going to generate options element');
 		var optionsElement = this.generate_options_element(question);
 		var gadget = goog.dom.createDom('div', 
 			{id: 'question_gadget_'+question.created_at.toString(), className: 'question_gadget z-depth-1'}, 
@@ -122,7 +120,6 @@ class quizDisplay {
 	//Courtesy of stackoverflow
 	// On link https://stackoverflow.com/questions/6274339/how-can-i-shuffle-an-array
 	shuffle_array(a) {
-		console.log('I am shuffling ', a)
 		for (var i = a.length - 1; i > 0; i--){
 			var j = Math.floor(Math.random() * i+1);
 			a[i],a[j] = a[j],a[i];
